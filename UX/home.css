@@ -1,0 +1,301 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+    }
+    
+    body{
+    background:#f6f8f7;
+    color:#333;
+    line-height:1.6;
+    }
+    
+    /* CONTAINER */
+    
+    .container{
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+    }
+    
+    /* NAVBAR */
+    
+    .navbar{
+    background:white;
+    padding:20px 0;
+    box-shadow:0 3px 10px rgba(0,0,0,0.05);
+    position:sticky;
+    top:0;
+    z-index:1000;
+    }
+    
+    .nav-container{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    }
+    
+    .logo{
+    font-size:20px;
+    font-weight:600;
+    color:#27ae60;
+    }
+    
+    .nav-links{
+    list-style:none;
+    display:flex;
+    gap:30px;
+    }
+    
+    .nav-links a{
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+    position:relative;
+    transition:0.3s;
+    }
+    
+    .nav-links a:hover{
+    color:#27ae60;
+    }
+    
+    .hero{
+    height:90vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:white;
+    background:
+    linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),
+    url("../img/f12-grow-microgreens-indoors-v1.jpg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+}
+    .hero-content{
+    max-width:700px;
+    
+    }
+    
+    .hero h1{
+    font-size:80px;
+    margin-bottom:20px;
+    animation:fadeUp 1s ease;
+    }
+    
+    .hero p{
+    font-size:21px;
+    margin-bottom:30px;
+    animation:fadeUp 1.5s ease;
+    }
+    
+    .btn-main{
+    background:#27ae60;
+    border:none;
+    padding:15px 35px;
+    font-size:18px;
+    border-radius:30px;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+    }
+    
+    .btn-main:hover{
+    transform:translateY(-5px);
+    box-shadow:0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    /* ABOUT */
+.about-container{
+    display:flex;
+    align-items:center;
+    gap:40px;
+}
+
+.about-text{
+    flex:1.5;
+    padding:10px;
+}
+
+.about-text h2{
+    font-size:34px;
+    margin-bottom:20px;
+    color:#222;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.about-text p{
+    font-size:17px;
+    line-height:1.8;
+    color:#555;
+    margin-top:15px;
+    text-align:justify;
+}
+
+.about-image{
+    flex:2;
+    margin-top:65px;
+    margin-left: 70px;
+}
+
+.about-image img{
+    width:100%;
+    height:350px; 
+    object-fit:cover; 
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+    
+    /* FEATURES */
+    
+    .features{
+    padding:80px 0;
+    background:#f3f6f4;
+    text-align:center;
+    }
+    
+    .features h2{
+    margin-bottom:40px;
+    font-size:32px;
+    }
+    
+    .feature-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+    }
+    
+    .feature-card{
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+    font-weight:500;
+    transition:0.3s;
+    }
+    
+    .feature-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    /* PRODUCTS */
+    
+    .products{
+    padding:80px 0;
+    text-align:center;
+    }
+    
+    .products h2{
+    font-size:35px;
+    margin-bottom:40px;
+    }
+    
+    .product-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:30px;
+    }
+    
+    .product-card{
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+    transition:0.4s;
+    }
+    
+    .product-card:hover{
+    transform:translateY(-10px);
+    }
+    
+    .product-card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    transition:0.4s;
+    }
+    
+    .product-card:hover img{
+    transform:scale(1.1);
+    }
+    
+    .product-card h3{
+    padding:20px;
+    }
+    
+    /* CLIENTS */
+    
+    .clients{
+    padding:80px 0;
+    background:#f3f6f4;
+    text-align:center;
+    }
+    
+    .clients h2{
+    font-size:35px;
+    margin-bottom:40px;
+    }
+    
+    .client-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;
+    }
+    
+    .client-card{
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+    transition:0.3s;
+    font-weight:500;
+    }
+    
+    .client-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    /* FOOTER */
+    
+    footer{
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:30px;
+    margin-top:40px;
+    }
+    
+    /* ANIMATION */
+    
+    @keyframes fadeUp{
+    
+    from{
+    opacity:0;
+    transform:translateY(40px);
+    }
+    
+    to{
+    opacity:1;
+    transform:translateY(0);
+    }
+    
+    }
+    
+    /* RESPONSIVE */
+    
+    @media(max-width:768px){
+    
+    .hero h1{
+    font-size:35px;
+    }
+    
+    .nav-links{
+    display:none;
+    }
+    
+    }
