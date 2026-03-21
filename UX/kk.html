@@ -8,7 +8,7 @@
 
 <title>Micro Green Garden House</title>
 
-<link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="kk.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -191,58 +191,52 @@ Our products are supplied to luxury hotels, restaurants, cafés, and supermarket
 
 </section>
 <!-- CLIENTS -->
-
 <section class="trusted-section">
-  <h2>Trusted By</h2>
-
-  <div class="trusted-logos">
-
-    <div class="logo-card">
-      <img src="../img/cinnamon.jpeg" alt="Cinnamon Citadel">
+    <h2>Trusted By</h2>
+  
+    <div class="logo-slider">
+      <div class="logo-track">
+  
+        <!-- ORIGINAL LOGOS -->
+        <div class="logo-card"><img src="../img/cinnamon.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/kandy-myst.png" alt=""></div>
+        <div class="logo-card"><img src="../img/theva.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/mr.png" alt=""></div>
+        <div class="logo-card"><img src="../img/err.png" alt=""></div>
+        <div class="logo-card"><img src="../img/golden_crown_black.png" alt=""></div>
+        <div class="logo-card"><img src="../img/luuv.png" alt=""></div>
+        <div class="logo-card"><img src="../img/taruvillaslogo.jpg.webp" alt=""></div>
+        <div class="logo-card"><img src="../img/er.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/ht.png" alt=""></div>
+        <div class="logo-card"><img src="../img/gk.jpeg" alt=""></div>
+  
+        <!-- DUPLICATE (for infinite scroll) -->
+        <div class="logo-card"><img src="../img/cinnamon.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/kandy-myst.png" alt=""></div>
+        <div class="logo-card"><img src="../img/theva.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/mr.png" alt=""></div>
+        <div class="logo-card"><img src="../img/err.png" alt=""></div>
+        <div class="logo-card"><img src="../img/golden_crown_black.png" alt=""></div>
+        <div class="logo-card"><img src="../img/luuv.png" alt=""></div>
+        <div class="logo-card"><img src="../img/taruvillaslogo.jpg.webp" alt=""></div>
+        <div class="logo-card"><img src="../img/er.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/ht.png" alt=""></div>
+        <div class="logo-card"><img src="../img/gk.jpeg" alt=""></div>
+  
+      </div>
     </div>
+  </section>
 
-    <div class="logo-card">
-      <img src="../img/kandy-myst.png" alt="Kandy Myst">
-    </div>
+  <section class="review-section">
+    <h2>Customer Reviews</h2>
+  
+    <div id="review-list"></div>
+  
+    <button onclick="goToAddReview()" class="add-btn">
+      + Add Review <link rel="stylesheet" href="ADD REVIEW PAGE.html">
+    </button>
+  </section>
 
-    <div class="logo-card">
-      <img src="../img/theva.jpeg" alt="Amaya Lake">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/mr.png"" alt="Amaya Regency">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/err.png" alt="Theva Residency">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/golden_crown_black.png" alt="Golden Crown">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/luuv.png" alt="Rangiri Dambulla">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/taruvillaslogo.jpg.webp" alt="Taru Villas">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/er.jpeg" alt="Mahaweli Reach">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/ht.png" alt="Hotel Topaz">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/gk.jpeg" alt="Grand Kandyan">
-    </div>
-
-  </div>
-</section>
 
 <!-- FOOTER -->
 
@@ -257,3 +251,28 @@ Our products are supplied to luxury hotels, restaurants, cafés, and supermarket
 </body>
 
 </html>
+
+
+<script>
+    function goToAddReview() {
+      window.location.href = "add-review.html";
+    }
+    
+    function loadReviews() {
+      const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+      const container = document.getElementById("review-list");
+    
+      container.innerHTML = "";
+    
+      reviews.forEach(r => {
+        container.innerHTML += `
+          <div class="review-card">
+            <h4>${r.name}</h4>
+            <p>${r.text}</p>
+          </div>
+        `;
+      });
+    }
+    
+    loadReviews();
+    </script>

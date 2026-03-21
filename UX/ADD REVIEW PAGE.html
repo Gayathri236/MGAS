@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Review</title>
+</head>
+<body>
+
+<h2>Add Your Review</h2>
+
+<input type="text" id="name" placeholder="Your Name"><br><br>
+<textarea id="text" placeholder="Your Review"></textarea><br><br>
+
+<button onclick="saveReview()">Submit</button>
+
+<script>
+function saveReview() {
+  const name = document.getElementById("name").value;
+  const text = document.getElementById("text").value;
+
+  if (!name || !text) {
+    alert("Fill all fields");
+    return;
+  }
+
+  const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+
+  reviews.push({ name, text });
+
+  localStorage.setItem("reviews", JSON.stringify(reviews));
+
+  window.location.href = "index.html"; // go back to home
+}
+</script>
+
+</body>
+</html>
