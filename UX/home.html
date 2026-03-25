@@ -12,6 +12,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+
 </head>
 
 <body>
@@ -29,7 +30,7 @@
 <ul class="nav-links">
 
 <li><a href="#home">Home</a></li>
-<li><a href="#about">About</a></li>
+<li><a href="about.html">About</a></li>
 <li><a href="#products">Products</a></li>
 <li><a href="#clients">Clients</a></li>
 
@@ -86,7 +87,7 @@ Our products are supplied to luxury hotels, restaurants, cafés, and supermarket
 </section>
 
 
-<!-- FEATURES -->
+   <!-- FEATURES -->
 <section class="features">
 
   <div class="container">
@@ -157,8 +158,7 @@ Our products are supplied to luxury hotels, restaurants, cafés, and supermarket
         <img src="../img/IMG_7720.AVIF" alt="Microgreen">
         <div class="product-overlay">
           <p>Fresh, nutrient-packed microgreens grown in a clean greenhouse environment. 
-                Perfect for salads, sandwiches, and gourmet dishes. 
-                Our microgreens are harvested young to deliver intense flavor and maximum nutrition.</p>
+                Perfect for salads, sandwiches, and gourmet dishes. </p>
           <button class="btn-view">View Product</button>
         </div>
         <h3 class="product-name">Microgreen</h3>
@@ -191,58 +191,42 @@ Our products are supplied to luxury hotels, restaurants, cafés, and supermarket
 
 </section>
 <!-- CLIENTS -->
-
 <section class="trusted-section">
-  <h2>Trusted By</h2>
-
-  <div class="trusted-logos">
-
-    <div class="logo-card">
-      <img src="../img/cinnamon.jpeg" alt="Cinnamon Citadel">
+    <h2>Trusted By</h2>
+  
+    <div class="logo-slider">
+      <div class="logo-track">
+  
+        <!-- ORIGINAL LOGOS -->
+        <div class="logo-card"><img src="../img/cinnamon.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/kandy-myst.png" alt=""></div>
+        <div class="logo-card"><img src="../img/theva.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/mr.png" alt=""></div>
+        <div class="logo-card"><img src="../img/err.png" alt=""></div>
+        <div class="logo-card"><img src="../img/golden_crown_black.png" alt=""></div>
+        <div class="logo-card"><img src="../img/luuv.png" alt=""></div>
+        <div class="logo-card"><img src="../img/taruvillaslogo.jpg.webp" alt=""></div>
+        <div class="logo-card"><img src="../img/er.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/ht.png" alt=""></div>
+        <div class="logo-card"><img src="../img/gk.jpeg" alt=""></div>
+  
+        <!-- DUPLICATE (for infinite scroll) -->
+        <div class="logo-card"><img src="../img/cinnamon.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/kandy-myst.png" alt=""></div>
+        <div class="logo-card"><img src="../img/theva.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/mr.png" alt=""></div>
+        <div class="logo-card"><img src="../img/err.png" alt=""></div>
+        <div class="logo-card"><img src="../img/golden_crown_black.png" alt=""></div>
+        <div class="logo-card"><img src="../img/luuv.png" alt=""></div>
+        <div class="logo-card"><img src="../img/taruvillaslogo.jpg.webp" alt=""></div>
+        <div class="logo-card"><img src="../img/er.jpeg" alt=""></div>
+        <div class="logo-card"><img src="../img/ht.png" alt=""></div>
+        <div class="logo-card"><img src="../img/gk.jpeg" alt=""></div>
+  
+      </div>
     </div>
+  </section>
 
-    <div class="logo-card">
-      <img src="../img/kandy-myst.png" alt="Kandy Myst">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/theva.jpeg" alt="Amaya Lake">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/mr.png"" alt="Amaya Regency">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/err.png" alt="Theva Residency">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/golden_crown_black.png" alt="Golden Crown">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/luuv.png" alt="Rangiri Dambulla">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/taruvillaslogo.jpg.webp" alt="Taru Villas">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/er.jpeg" alt="Mahaweli Reach">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/ht.png" alt="Hotel Topaz">
-    </div>
-
-    <div class="logo-card">
-      <img src="../img/gk.jpeg" alt="Grand Kandyan">
-    </div>
-
-  </div>
-</section>
 
 <!-- FOOTER -->
 
@@ -251,6 +235,23 @@ Our products are supplied to luxury hotels, restaurants, cafés, and supermarket
 <p>© 2026 Micro Green Garden House</p>
 
 </footer>
+<script>
+const reveals = document.querySelectorAll(".reveal");
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, index) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add("active");
+      }, index * 200);
+    }
+  });
+}, { threshold: 0.2 });
+
+reveals.forEach((reveal) => {
+  observer.observe(reveal);
+});
+</script>
 
 <script src="script.js"></script>
 

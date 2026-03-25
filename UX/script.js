@@ -1,19 +1,18 @@
-// smooth scrolling
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+const reveals = document.querySelectorAll(".reveal");
 
-    anchor.addEventListener("click", function(e){
-    
-    e.preventDefault();
-    
-    document.querySelector(this.getAttribute("href"))
-    
-    .scrollIntoView({
-    
-    behavior:"smooth"
-    
-    });
-    
-    });
-    
-    });
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, index) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add("active");
+      }, index * 200); // delay each card
+    }
+  });
+}, {
+  threshold: 0.2
+});
+
+reveals.forEach((reveal) => {
+  observer.observe(reveal);
+});
