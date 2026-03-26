@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Products | Micro Green Garden House</title>
+            <link rel="stylesheet" href="product.css">
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    🌱 Micro Green Garden House
+                </div>
+                <ul class="nav-links">
+                    <li><a href="home.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="products.html" class="active">Products</a></li>
+                    <li><a href="index.html#clients">Clients</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- PRODUCTS HERO SECTION -->
+        <section class="products-hero">
+            <div class="hero-content">
+                <h1>Our <span class="title-gradient">Fresh Products</span></h1>
+                <p>Premium quality microgreens, lettuce, and peppers grown with care and sustainability</p>
+            </div>
+        </section>
+
+        <!-- TABS SECTION -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="micro">🌱 Microgreens</div>
+                <div class="tab" data-tab="lettuce">🥬 Lettuce</div>
+                <div class="tab" data-tab="pepper">🌶️ Pepper</div>
+            </div>
+        </div>
+
+        <!-- MICROGREENS SECTION -->
+        <div id="micro" class="section active">
+            <div class="grid" id="microGrid"></div>
+        </div>
+
+        <!-- LETTUCE SECTION -->
+        <div id="lettuce" class="section">
+            <div class="grid" id="lettuceGrid"></div>
+        </div>
+
+        <!-- PEPPER SECTION -->
+        <div id="pepper" class="section">
+            <div class="grid" id="pepperGrid"></div>
+        </div>
+
+        <!-- CTA SECTION -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Ready to Order Fresh Greens?</h2>
+                <p>Contact us today for bulk orders or wholesale pricing</p>
+                <button class="btn-cta" onclick="window.location.href='about.html#contact'">Get in Touch →</button>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>© 2026 Micro Green Garden House | Premium Microgreens Supplier in Sri Lanka</p>
+        </footer>
+
+         <!-- JavaScript -->
+        <script src="product.js"></script>
+
+   </body>
+</html>

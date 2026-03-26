@@ -12,53 +12,720 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+<style>
+      :root {
+        --primary-dark: #1a4a1a;
+        --primary: #2d6a2d;
+        --primary-light: #4cae4c;
+        --secondary: #ffb347;
+        --secondary-light: #ffcd94;
+        --accent: #8bc34a;
+        --dark: #1a2a1a;
+        --light: #fafef7;
+        --gray: #6b6e6b;
+        --gray-light: #e8f0e5;
+        --white: #ffffff;
+        --shadow-sm: 0 5px 20px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.15);
+        --shadow-hover: 0 25px 40px rgba(45, 106, 45, 0.2);
+        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        --border-radius: 24px;
+        --border-radius-lg: 32px;
+    }
+
+            /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+       /* NAVBAR - GLASS EFFECT */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 80px;
+            box-shadow: var(--shadow-sm);
+            z-index: 1000;
+            transition: var(--transition);
+            border: 1px solid rgba(76, 174, 76, 0.2);
+        }
+
+        .navbar.scrolled {
+            top: 10px;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+          
+          /* HERO */
+          .hero{
+          height:100vh;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          text-align:center;
+          position:relative;
+          overflow:hidden;
+          }
+          .hero::before{
+          content:'';
+          position:absolute;
+          width:100%;
+          height:100%;
+          background:linear-gradient(135deg,#1a4a1a,#4cae4c);
+          z-index:-1;
+          }
+          .hero::after{
+          content:'🌱';
+          position:absolute;
+          top:10%;
+          left:5%;
+          font-size:80px;
+          opacity:0.15;
+          animation:float 6s ease-in-out infinite;
+          }
+          @keyframes float{
+          0%,100%{transform:translateY(0);}
+          50%{transform:translateY(-20px);}
+          }
+          
+          .hero-content{color:white;max-width:700px;animation:fadeUp 1s ease;}
+          
+          .badge{
+          background:rgba(255,255,255,0.2);
+          padding:8px 20px;
+          border-radius:50px;
+          margin-bottom:20px;
+          display:inline-block;
+          }
+          
+          .hero h1{font-size:50px;margin-bottom:20px;}
+          .hero h1 span{color:#ffd966;}
+          .hero p{font-size:18px;margin-bottom:30px;}
+          
+          .stats{display:flex;justify-content:center;gap:30px;margin-bottom:30px;}
+          .stats h2{color:#ffd966;}
+          
+          /* BUTTONS */
+          .btn-primary{
+          background:#ffd966;
+          color:#1a4a1a;
+          padding:12px 25px;
+          border-radius:30px;
+          text-decoration:none;
+          font-weight:600;
+          margin-right:10px;
+          transition:0.3s;
+          }
+          .btn-primary:hover{transform:translateY(-3px);}
+          .btn-secondary{
+          background:rgba(255,255,255,0.2);
+          color:white;
+          padding:12px 25px;
+          border-radius:30px;
+          text-decoration:none;
+          }
+          .btn-secondary:hover{transform:translateY(-3px);}
+
+          footer {
+            background-color: #34ef34;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: var(--white);
+            text-align: center;
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '🌱';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: var(--shadow-sm);
+            line-height: 1;
+        }
+
+        /* ========================================
+   REVIEWS SECTION
+   ======================================== */
+.reviews-pro {
+    padding: 80px 0;
+    background: linear-gradient(135deg, var(--white), var(--gray-light));
+    position: relative;
+    overflow: hidden;
+}
+
+.reviews-pro::before {
+    content: '⭐';
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    font-size: 8rem;
+    opacity: 0.03;
+    animation: floatRight 15s ease-in-out infinite;
+}
+
+.reviews-pro::after {
+    content: '💬';
+    position: absolute;
+    bottom: 10%;
+    left: 5%;
+    font-size: 8rem;
+    opacity: 0.03;
+    animation: floatLeft 15s ease-in-out infinite;
+}
+
+.reviews-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 60px;
+    position: relative;
+    z-index: 2;
+}
+
+/* LEFT SIDE - REVIEW SUMMARY */
+.review-summary {
+    background: var(--white);
+    border-radius: 32px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    transition: var(--transition);
+    border: 1px solid rgba(76, 174, 76, 0.1);
+}
+
+.review-summary:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(76, 174, 76, 0.3);
+}
+
+.review-summary h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+}
+
+.review-summary h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-light), var(--primary));
+    border-radius: 3px;
+}
+
+.rating-box {
+    margin-bottom: 1.5rem;
+}
+
+.rating-box h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+}
+
+.stars {
+    font-size: 1.5rem;
+    color: #ffc107;
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+}
+
+.rating-box p {
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.write-btn {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 250px;
+}
+
+.write-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(45, 106, 45, 0.3);
+}
+
+/* Rating Bars */
+.bars {
+    text-align: left;
+    margin-top: 1rem;
+}
+
+.bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.bar span:first-child {
+    font-weight: 600;
+    color: var(--primary-dark);
+    min-width: 25px;
+}
+
+.progress {
+    flex: 1;
+    height: 8px;
+    background: var(--gray-light);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary), var(--secondary-light));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+/* RIGHT SIDE - REVIEW SLIDER */
+.review-slider {
+    background: var(--white);
+    border-radius: 32px;
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(76, 174, 76, 0.1);
+}
+
+.review-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--gray-light);
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    transition: var(--transition);
+    animation: slideReview 0.5s ease;
+}
+
+.review-card:hover {
+    transform: translateX(10px);
+    background: rgba(76, 174, 76, 0.1);
+}
+
+.review-card img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.review-card h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 0.25rem;
+}
+
+.review-card span {
+    font-size: 0.75rem;
+    color: var(--gray);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.review-card p {
+    font-size: 0.9rem;
+    color: var(--dark);
+    line-height: 1.5;
+}
+
+/* Auto Slider Animation */
+@keyframes slideReview {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ========================================
+   POPUP MODAL
+   ======================================== */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.popup-box {
+    background: var(--white);
+    max-width: 450px;
+    width: 90%;
+    padding: 2rem;
+    border-radius: 32px;
+    text-align: center;
+    animation: slideUp 0.4s ease;
+    box-shadow: var(--shadow-lg);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.popup-box h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 1.5rem;
+}
+
+.popup-box input,
+.popup-box textarea {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(76, 174, 76, 0.2);
+    border-radius: 16px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.popup-box input:focus,
+.popup-box textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(76, 174, 76, 0.1);
+}
+
+.popup-box textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.star-select {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.star-select span {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #ddd;
+    transition: var(--transition);
+}
+
+.star-select span:hover,
+.star-select span.active {
+    color: #ffc107;
+    transform: scale(1.1);
+}
+
+.popup-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.popup-btns button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.popup-btns button:first-child {
+    background: var(--gray-light);
+    color: var(--gray);
+}
+
+.popup-btns button:first-child:hover {
+    background: #ddd;
+}
+
+.popup-btns button:last-child {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+}
+
+.popup-btns button:last-child:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(45, 106, 45, 0.3);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 992px) {
+    .reviews-wrapper {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .review-summary {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .review-slider {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .reviews-pro {
+        padding: 60px 0;
+    }
+    
+    .review-summary h2 {
+        font-size: 1.5rem;
+    }
+    
+    .rating-box h1 {
+        font-size: 3rem;
+    }
+    
+    .stars {
+        font-size: 1.2rem;
+    }
+    
+    .review-card {
+        padding: 1rem;
+    }
+    
+    .review-card img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .review-card h4 {
+        font-size: 0.9rem;
+    }
+    
+    .review-card p {
+        font-size: 0.85rem;
+    }
+    
+    .popup-box {
+        padding: 1.5rem;
+    }
+    
+    .popup-box h3 {
+        font-size: 1.5rem;
+    }
+    
+    .star-select span {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .review-summary {
+        padding: 1.5rem;
+    }
+    
+    .write-btn {
+        padding: 10px 24px;
+        font-size: 0.9rem;
+    }
+    
+    .bar {
+        gap: 8px;
+    }
+    
+    .bar span:first-child {
+        font-size: 0.85rem;
+    }
+    
+    .review-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .review-card img {
+        margin: 0 auto;
+    }
+    
+    .popup-btns {
+        flex-direction: column;
+    }
+    
+    .popup-btns button {
+        width: 100%;
+    }
+}
+  
+</style>
 
 </head>
 
 <body>
 
-<!-- NAVBAR -->
+    <!-- NAVBAR -->
+      <nav class="navbar">
+        <div class="nav-container">
+        <div class="logo">🌱 Micro Green Garden House</div>
+        <ul class="nav-links">
+          <li><a href="home.html" class="active">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="product.html">Products</a></li>
+          <li><a href="">Features</a></li>
+        </ul>
+        </div>
+      </nav>
+      
+  <!-- HERO -->
+  <section class="hero">
+  <div class="hero-content">
+  <div class="badge">🌱 Fresh Daily</div>
+  <h1>Premium Microgreens <br><span>Sri Lanka</span></h1>
+  <p>Fresh, natural and chemical-free microgreens delivered across Sri Lanka.</p>
+  
+  <div class="stats">
+  <div><h2>10+</h2><span>Years</span></div>
+  <div><h2>50+</h2><span>Clients</span></div>
+  <div><h2>24/7</h2><span>Supply</span></div>
+  </div>
+  
+  <a href="#products" class="btn-primary">Explore →</a>
+  <a href="about.html" class="btn-secondary">Learn More</a>
+  </div>
+  </section>
+  
 
-<nav class="navbar">
 
-<div class="container nav-container">
-
-<div class="logo">
-🌱 Micro Green Garden House
-</div>
-
-<ul class="nav-links">
-
-<li><a href="#home">Home</a></li>
-<li><a href="about.html">About</a></li>
-<li><a href="#products">Products</a></li>
-<li><a href="#clients">Clients</a></li>
-
-</ul>
-
-</div>
-
-</nav>
-
-
-<!-- HERO -->
-
-<section class="hero" id="home">
-
-<div class="hero-content">
-<h1>Fresh Premium Microgreens</h1>
-<h1>Sri Lanka</h1>
-
-<p>
-We provide fresh, natural, and chemical-free microgreens to luxury hotels,
-restaurants, and supermarkets across Sri Lanka.
-</p>
-
-<button class="btn-main">Explore Products</button>
-
-</div>
-
-</section>
 
 
 <!-- ABOUT -->
@@ -227,6 +894,88 @@ Our products are supplied to luxury hotels, restaurants, cafés, and supermarket
     </div>
   </section>
 
+      <section class="reviews-pro">
+
+      <div class="reviews-wrapper">
+
+      <!-- LEFT SIDE -->
+      <div class="review-summary">
+
+      <h2>Google review summary</h2>
+
+      <div class="rating-box">
+      <h1 id="avgRating">4.9</h1>
+      <div class="stars">★★★★★</div>
+      <p id="totalReviews">120 reviews</p>
+      </div>
+
+      <button class="write-btn" onclick="openPopup()">Write a review</button>
+
+      <div class="bars">
+      <div class="bar"><span>5</span><div class="progress"><div style="width:90%"></div></div></div>
+      <div class="bar"><span>4</span><div class="progress"><div style="width:7%"></div></div></div>
+      <div class="bar"><span>3</span><div class="progress"><div style="width:2%"></div></div></div>
+      <div class="bar"><span>2</span><div class="progress"><div style="width:1%"></div></div></div>
+      <div class="bar"><span>1</span><div class="progress"><div style="width:1%"></div></div></div>
+      </div>
+
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="review-slider" id="reviewSlider">
+
+      <div class="review-card">
+      <img src="https://i.pravatar.cc/40?img=1">
+      <div>
+      <h4>Kasun Gunarathna</h4>
+      <span>★★★★★ • 2 days ago</span>
+      <p>Very fresh microgreens. High quality and fast delivery.</p>
+      </div>
+      </div>
+
+      <div class="review-card">
+      <img src="https://i.pravatar.cc/40?img=2">
+      <div>
+      <h4>Chef Nimal</h4>
+      <span>★★★★★ • 1 week ago</span>
+      <p>Best supplier for restaurants. Highly recommended.</p>
+      </div>
+      </div>
+
+      <div class="review-card">
+      <img src="https://i.pravatar.cc/40?img=3">
+      <div>
+      <h4>Hotel Manager</h4>
+      <span>★★★★★ • 3 weeks ago</span>
+      <p>Consistent quality and great service.</p>
+      </div>
+      </div>
+
+    </div>
+
+    </div>
+    </section>
+
+    <!-- POPUP -->
+<div class="popup" id="popup">
+    <div class="popup-box">
+        <h3>Write a Review</h3>
+        <input type="text" id="name" placeholder="Your Name">
+        <div class="star-select" id="starSelect">
+            <span onclick="setRating(1)">☆</span>
+            <span onclick="setRating(2)">☆</span>
+            <span onclick="setRating(3)">☆</span>
+            <span onclick="setRating(4)">☆</span>
+            <span onclick="setRating(5)">☆</span>
+        </div>
+        <textarea id="reviewText" placeholder="Write your experience..."></textarea>
+        <div class="popup-btns">
+            <button onclick="closePopup()">Cancel</button>
+            <button onclick="addReview()">Post Review</button>
+        </div>
+    </div>
+</div>
+
 
 <!-- FOOTER -->
 
@@ -235,26 +984,11 @@ Our products are supplied to luxury hotels, restaurants, cafés, and supermarket
 <p>© 2026 Micro Green Garden House</p>
 
 </footer>
-<script>
-const reveals = document.querySelectorAll(".reveal");
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, index) => {
-    if (entry.isIntersecting) {
-      setTimeout(() => {
-        entry.target.classList.add("active");
-      }, index * 200);
-    }
-  });
-}, { threshold: 0.2 });
 
-reveals.forEach((reveal) => {
-  observer.observe(reveal);
-});
-</script>
-
-<script src="script.js"></script>
+<script src="home.js"></script>
 
 </body>
 
 </html>
+ 
