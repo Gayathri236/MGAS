@@ -1,0 +1,148 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(135deg,#048e27,#035d1f);
+}
+
+/* MAIN BOX */
+.container{
+    width:900px;
+    height:520px;
+    display:flex;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+}
+
+/* LEFT SIDE */
+.left{
+    flex:1;
+    background: linear-gradient(135deg,#044822,#00ad34);
+    color:white;
+    padding:60px 40px;
+    position:relative;
+}
+
+.left h1{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.left h3{
+    margin-bottom:20px;
+    font-weight:400;
+}
+
+.left p{
+    font-size:14px;
+    line-height:1.6;
+    color:#dbeafe;
+}
+
+/* CIRCLE DESIGN */
+.left::before{
+    content:'';
+    position:absolute;
+    width:300px;
+    height:300px;
+    background:rgba(255,255,255,0.1);
+    border-radius:50%;
+    bottom:-100px;
+    left:-80px;
+}
+
+.left::after{
+    content:'';
+    position:absolute;
+    width:200px;
+    height:200px;
+    background:rgba(255,255,255,0.1);
+    border-radius:50%;
+    bottom:50px;
+    right:-60px;
+}
+
+/* RIGHT SIDE */
+.right{
+    flex:1;
+    background:#fff;
+    padding:50px 40px;
+}
+
+.right h2{
+    font-size:26px;
+    margin-bottom:5px;
+}
+
+.sub{
+    color:#777;
+    margin-bottom:25px;
+}
+
+/* INPUT */
+.input-box{
+    margin-bottom:15px;
+}
+
+.input-box input{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    outline:none;
+}
+
+/* OPTIONS */
+.options{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    margin-bottom:20px;
+}
+
+.options a{
+    text-decoration:none;
+    color:#0f4c81;
+}
+
+/* BUTTON */
+.btn{
+    width:100%;
+    padding:12px;
+    background:#0f8139;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn:hover{
+    background:#0a2e4d;
+}
+
+/* OR */
+.or{
+    text-align:center;
+    margin:15px 0;
+    color:#999;
+}
+
+/* OUTLINE BTN */
+.btn-outline{
+    width:100%;
+    padding:12px;
+    border:1px solid #333;
+    background:white;
+    border-radius:8px;
+    cursor:pointer;
+}

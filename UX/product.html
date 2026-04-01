@@ -18,7 +18,7 @@
                     <li><a href="home.html">Home</a></li>
                     <li><a href="about.html">About</a></li>
                     <li><a href="products.html" class="active">Products</a></li>
-                    <li><a href="index.html#clients">Clients</a></li>
+                  
                 </ul>
             </div>
         </nav>
@@ -63,6 +63,34 @@
                 <button class="btn-cta" onclick="window.location.href='about.html#contact'">Get in Touch →</button>
             </div>
         </section>
+        <!-- CHATBOT -->
+<div class="chatbot-toggle" onclick="toggleChatbot()">💬</div>
+
+<div class="chatbot-container" id="chatbotContainer">
+  <div class="chatbot-header">
+    <span>Micro Green Assistant</span>
+    <button onclick="toggleChatbot()">✖</button>
+  </div>
+
+  <div class="chatbot-body" id="chatbotBody">
+    <div class="bot-message">
+      Hello 👋 Welcome to Micro Green Garden House. How can I help you?
+    </div>
+  </div>
+
+  <div class="chatbot-footer">
+    <input
+      type="text"
+      id="chatInput"
+      placeholder="Type your message..."
+      onkeypress="handleKeyPress(event)"
+    >
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<link rel="stylesheet" href="chatbot.css">
+<script src="chatbot.js"></script>
 
         <!-- FOOTER -->
         <footer>

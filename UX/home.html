@@ -1,994 +1,1960 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Micro Green Garden House</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  >
 
-<title>Micro Green Garden House</title>
-
-<link rel="stylesheet" href="home.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<style>
-      :root {
-        --primary-dark: #1a4a1a;
-        --primary: #2d6a2d;
-        --primary-light: #4cae4c;
-        --secondary: #ffb347;
-        --secondary-light: #ffcd94;
-        --accent: #8bc34a;
-        --dark: #1a2a1a;
-        --light: #fafef7;
-        --gray: #6b6e6b;
-        --gray-light: #e8f0e5;
-        --white: #ffffff;
-        --shadow-sm: 0 5px 20px rgba(0, 0, 0, 0.05);
-        --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
-        --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.15);
-        --shadow-hover: 0 25px 40px rgba(45, 106, 45, 0.2);
-        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        --border-radius: 24px;
-        --border-radius-lg: 32px;
+  <style>
+    :root {
+      --primary-dark: #1a4a1a;
+      --primary: #2d6a2d;
+      --primary-light: #4cae4c;
+      --secondary: #ffb347;
+      --secondary-light: #ffcd94;
+      --accent: #8bc34a;
+      --dark: #1a2a1a;
+      --light: #fafef7;
+      --gray: #6b6e6b;
+      --gray-light: #e8f0e5;
+      --white: #ffffff;
+      --shadow-sm: 0 5px 20px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.15);
+      --shadow-hover: 0 25px 40px rgba(45, 106, 45, 0.2);
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      --border-radius: 24px;
+      --border-radius-lg: 32px;
     }
 
-            /* CUSTOM SCROLLBAR */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        ::-webkit-scrollbar-track {
-            background: var(--gray-light);
-        }
+    html {
+      scroll-behavior: smooth;
+    }
 
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            border-radius: 10px;
-        }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+    }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
+    img {
+      max-width: 100%;
+      display: block;
+    }
 
-       /* NAVBAR - GLASS EFFECT */
-        .navbar {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 1300px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 80px;
-            box-shadow: var(--shadow-sm);
-            z-index: 1000;
-            transition: var(--transition);
-            border: 1px solid rgba(76, 174, 76, 0.2);
-        }
+    a {
+      text-decoration: none;
+    }
 
-        .navbar.scrolled {
-            top: 10px;
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: var(--shadow-md);
-        }
+    ul {
+      list-style: none;
+    }
 
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 2rem;
-        }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
 
-        .logo {
-            font-size: 1.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    /* CUSTOM SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
 
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
+    ::-webkit-scrollbar-track {
+      background: var(--gray-light);
+    }
 
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
-        }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: 10px;
+    }
 
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-light), var(--primary));
-            transition: width 0.3s ease;
-        }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
 
-        .nav-links a:hover::after,
-        .nav-links a.active::after {
-            width: 100%;
-        }
+    /* NAVBAR */
+    .navbar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 1300px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 80px;
+      box-shadow: var(--shadow-sm);
+      z-index: 1000;
+      transition: var(--transition);
+      border: 1px solid rgba(76, 174, 76, 0.2);
+    }
 
-        .nav-links a:hover {
-            color: var(--primary);
-        }
+    .navbar.scrolled {
+      top: 10px;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: var(--shadow-md);
+    }
 
-          
-          /* HERO */
-          .hero{
-          height:100vh;
-          display:flex;
-          justify-content:center;
-          align-items:center;
-          text-align:center;
-          position:relative;
-          overflow:hidden;
-          }
-          .hero::before{
-          content:'';
-          position:absolute;
-          width:100%;
-          height:100%;
-          background:linear-gradient(135deg,#1a4a1a,#4cae4c);
-          z-index:-1;
-          }
-          .hero::after{
-          content:'🌱';
-          position:absolute;
-          top:10%;
-          left:5%;
-          font-size:80px;
-          opacity:0.15;
-          animation:float 6s ease-in-out infinite;
-          }
-          @keyframes float{
-          0%,100%{transform:translateY(0);}
-          50%{transform:translateY(-20px);}
-          }
-          
-          .hero-content{color:white;max-width:700px;animation:fadeUp 1s ease;}
-          
-          .badge{
-          background:rgba(255,255,255,0.2);
-          padding:8px 20px;
-          border-radius:50px;
-          margin-bottom:20px;
-          display:inline-block;
-          }
-          
-          .hero h1{font-size:50px;margin-bottom:20px;}
-          .hero h1 span{color:#ffd966;}
-          .hero p{font-size:18px;margin-bottom:30px;}
-          
-          .stats{display:flex;justify-content:center;gap:30px;margin-bottom:30px;}
-          .stats h2{color:#ffd966;}
-          
-          /* BUTTONS */
-          .btn-primary{
-          background:#ffd966;
-          color:#1a4a1a;
-          padding:12px 25px;
-          border-radius:30px;
-          text-decoration:none;
-          font-weight:600;
-          margin-right:10px;
-          transition:0.3s;
-          }
-          .btn-primary:hover{transform:translateY(-3px);}
-          .btn-secondary{
-          background:rgba(255,255,255,0.2);
-          color:white;
-          padding:12px 25px;
-          border-radius:30px;
-          text-decoration:none;
-          }
-          .btn-secondary:hover{transform:translateY(-3px);}
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 2rem;
+    }
 
-          footer {
-            background-color: #34ef34;
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            color: var(--white);
-            text-align: center;
-            padding: 2.5rem;
-            position: relative;
-        }
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        footer::before {
-            content: '🌱';
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2rem;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            box-shadow: var(--shadow-sm);
-            line-height: 1;
-        }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
 
-        /* ========================================
-   REVIEWS SECTION
-   ======================================== */
-.reviews-pro {
-    padding: 80px 0;
-    background: linear-gradient(135deg, var(--white), var(--gray-light));
-    position: relative;
-    overflow: hidden;
+    .nav-links a {
+      color: var(--dark);
+      font-weight: 500;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-light), var(--primary));
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+  .hero {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0 20px;
 }
 
-.reviews-pro::before {
-    content: '⭐';
-    position: absolute;
-    top: 10%;
-    right: 5%;
-    font-size: 8rem;
-    opacity: 0.03;
-    animation: floatRight 15s ease-in-out infinite;
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(20, 60, 20, 0.65), rgba(76, 174, 76, 0.45)),
+    url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  z-index: -1;
+  transform: scale(1.05);
 }
 
-.reviews-pro::after {
-    content: '💬';
-    position: absolute;
-    bottom: 10%;
-    left: 5%;
-    font-size: 8rem;
-    opacity: 0.03;
-    animation: floatLeft 15s ease-in-out infinite;
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: -1;
 }
 
-.reviews-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 60px;
-    position: relative;
-    z-index: 2;
+.hero-content {
+  color: white;
+  max-width: 700px;
+  animation: fadeUp 1s ease;
+  z-index: 1;
 }
 
-/* LEFT SIDE - REVIEW SUMMARY */
-.review-summary {
-    background: var(--white);
-    border-radius: 32px;
-    padding: 2.5rem;
-    box-shadow: var(--shadow-lg);
-    text-align: center;
-    transition: var(--transition);
-    border: 1px solid rgba(76, 174, 76, 0.1);
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.review-summary:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
-    border-color: rgba(76, 174, 76, 0.3);
+.badge {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 10px 22px;
+  border-radius: 50px;
+  margin-bottom: 20px;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-.review-summary h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 1.5rem;
-    position: relative;
-    display: inline-block;
-}
+    .hero h1 {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
 
-.review-summary h2::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary-light), var(--primary));
-    border-radius: 3px;
-}
+    .hero h1 span {
+      color: #ffd966;
+    }
 
-.rating-box {
-    margin-bottom: 1.5rem;
-}
+    .hero p {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
 
-.rating-box h1 {
-    font-size: 4rem;
-    font-weight: 800;
-    color: var(--secondary);
-    margin-bottom: 0.5rem;
-}
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
 
-.stars {
-    font-size: 1.5rem;
-    color: #ffc107;
-    letter-spacing: 3px;
-    margin-bottom: 0.5rem;
-}
+    .stats h2 {
+      color: #ffd966;
+    }
 
-.rating-box p {
-    color: var(--gray);
-    font-size: 0.9rem;
-}
+    /* BUTTONS */
+    .btn-primary,
+    .btn-secondary {
+      display: inline-block;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: 0.3s;
+    }
 
-.write-btn {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: white;
-    border: none;
-    padding: 12px 32px;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: var(--transition);
-    margin-bottom: 2rem;
-    width: 100%;
-    max-width: 250px;
-}
+    .btn-primary {
+      background: #ffd966;
+      color: #1a4a1a;
+      margin-right: 10px;
+    }
 
-.write-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(45, 106, 45, 0.3);
-}
+    .btn-primary:hover,
+    .btn-secondary:hover {
+      transform: translateY(-3px);
+    }
 
-/* Rating Bars */
-.bars {
-    text-align: left;
-    margin-top: 1rem;
-}
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
 
-.bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-}
+    /* ABOUT */
+    .about {
+      padding: 100px 0 60px;
+      background: var(--white);
+    }
 
-.bar span:first-child {
-    font-weight: 600;
-    color: var(--primary-dark);
-    min-width: 25px;
-}
+    .about-container {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
 
-.progress {
-    flex: 1;
-    height: 8px;
-    background: var(--gray-light);
-    border-radius: 10px;
-    overflow: hidden;
-}
+    .about-text {
+      flex: 1 1 450px;
+      padding: 10px;
+    }
 
-.progress div {
-    height: 100%;
-    background: linear-gradient(90deg, var(--secondary), var(--secondary-light));
-    border-radius: 10px;
-    transition: width 0.5s ease;
-}
+    .about-text h2 {
+      font-size: 34px;
+      margin-bottom: 20px;
+      color: #222;
+      text-align: center;
+    }
 
-/* RIGHT SIDE - REVIEW SLIDER */
-.review-slider {
-    background: var(--white);
-    border-radius: 32px;
-    padding: 2rem;
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
-    position: relative;
-    border: 1px solid rgba(76, 174, 76, 0.1);
-}
+    .about-text p {
+      font-size: 17px;
+      line-height: 1.8;
+      color: #555;
+      margin-top: 15px;
+      text-align: justify;
+    }
 
-.review-card {
-    display: flex;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: var(--gray-light);
-    border-radius: 20px;
-    margin-bottom: 1rem;
-    transition: var(--transition);
-    animation: slideReview 0.5s ease;
-}
+    .about-image {
+      flex: 1 1 450px;
+    }
 
-.review-card:hover {
-    transform: translateX(10px);
-    background: rgba(76, 174, 76, 0.1);
-}
+    .about-image img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
 
-.review-card img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-}
+    /* FEATURES */
+    .features {
+      padding: 120px 0;
+      background: linear-gradient(145deg, #f8faf8 0%, #f0f5f0 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-.review-card h4 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 0.25rem;
-}
+    .features::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(39, 174, 96, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: 0;
+      animation: floatBlob 15s infinite alternate ease-in-out;
+    }
 
-.review-card span {
-    font-size: 0.75rem;
-    color: var(--gray);
-    display: block;
-    margin-bottom: 0.5rem;
-}
+    .features::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(39, 174, 96, 0.05) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: 0;
+      animation: floatBlob 18s infinite alternate-reverse ease-in-out;
+    }
 
-.review-card p {
-    font-size: 0.9rem;
-    color: var(--dark);
-    line-height: 1.5;
-}
+    @keyframes floatBlob {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 50px) scale(1.2); }
+    }
 
-/* Auto Slider Animation */
-@keyframes slideReview {
-    from {
+    .features .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    .features h2 {
+      font-size: 3.2rem;
+      font-weight: 700;
+      margin-bottom: 60px;
+      color: #1e2f23;
+      position: relative;
+      display: inline-block;
+      letter-spacing: -0.02em;
+    }
+
+    .features h2::after {
+      content: '';
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #27ae60, #2ecc71, #27ae60);
+      display: block;
+      margin: 20px auto 0;
+      border-radius: 4px;
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .features-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 50px;
+      position: relative;
+      flex-wrap: wrap;
+    }
+
+    .features-left,
+    .features-right {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      flex: 1;
+      max-width: 300px;
+    }
+
+    .features-center {
+      position: relative;
+      z-index: 2;
+      animation: fadeInUp 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .features-center::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(100% + 30px);
+      height: calc(100% + 30px);
+      background: radial-gradient(circle, rgba(39, 174, 96, 0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+      animation: pulse 3s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+    }
+
+    .features-center img {
+      width: 320px;
+      height: 520px;
+      object-fit: cover;
+      border-radius: 30px;
+      box-shadow:
+        0 25px 40px -15px rgba(0, 0, 0, 0.3),
+        0 0 0 2px rgba(255, 255, 255, 0.5) inset,
+        0 0 0 4px rgba(39, 174, 96, 0.1);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      filter: brightness(1.02) contrast(1.02);
+      animation: imageLoad 0.5s ease;
+    }
+
+    .features-center img:hover {
+      transform: scale(1.03) rotate(1deg);
+      box-shadow:
+        0 35px 50px -15px rgba(39, 174, 96, 0.4),
+        0 0 0 3px rgba(255, 255, 255, 0.7) inset,
+        0 0 0 6px rgba(39, 174, 96, 0.15);
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 28px 25px;
+      border-radius: 25px;
+      box-shadow:
+        0 15px 35px -10px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(39, 174, 96, 0.05) 0%, transparent 50%);
+      z-index: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 15px 0 8px;
+      color: #1e2f23;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .feature-card p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #4a5a52;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+      font-weight: 400;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow:
+        0 25px 45px -12px rgba(39, 174, 96, 0.35),
+        0 4px 12px rgba(39, 174, 96, 0.1);
+      border-color: rgba(39, 174, 96, 0.3);
+      background: white;
+    }
+
+    .feature-card:hover::before {
+      opacity: 0.8;
+    }
+
+    @keyframes slideInLeft {
+      from {
         opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
+        transform: translateX(-30px);
+      }
+      to {
         opacity: 1;
         transform: translateX(0);
+      }
     }
-}
 
-/* ========================================
-   POPUP MODAL
-   ======================================== */
-.popup {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from {
+    @keyframes slideInRight {
+      from {
         opacity: 0;
-    }
-    to {
+        transform: translateX(30px);
+      }
+      to {
         opacity: 1;
+        transform: translateX(0);
+      }
     }
-}
 
-.popup-box {
-    background: var(--white);
-    max-width: 450px;
-    width: 90%;
-    padding: 2rem;
-    border-radius: 32px;
-    text-align: center;
-    animation: slideUp 0.4s ease;
-    box-shadow: var(--shadow-lg);
-}
-
-@keyframes slideUp {
-    from {
+    @keyframes fadeInUp {
+      from {
         opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
+        transform: translateY(30px);
+      }
+      to {
         opacity: 1;
         transform: translateY(0);
+      }
     }
-}
 
-.popup-box h3 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 1.5rem;
-}
+    .features-left .feature-card {
+      animation: slideInLeft 0.6s ease forwards;
+      opacity: 0;
+    }
 
-.popup-box input,
-.popup-box textarea {
-    width: 100%;
-    padding: 12px 16px;
-    margin-bottom: 1rem;
-    border: 1px solid rgba(76, 174, 76, 0.2);
-    border-radius: 16px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
-    transition: var(--transition);
-}
+    .features-right .feature-card {
+      animation: slideInRight 0.6s ease forwards;
+      opacity: 0;
+    }
 
-.popup-box input:focus,
-.popup-box textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(76, 174, 76, 0.1);
-}
+    .features-left .feature-card:nth-child(1) { animation-delay: 0.2s; }
+    .features-left .feature-card:nth-child(2) { animation-delay: 0.35s; }
+    .features-left .feature-card:nth-child(3) { animation-delay: 0.5s; }
+    .features-right .feature-card:nth-child(1) { animation-delay: 0.25s; }
+    .features-right .feature-card:nth-child(2) { animation-delay: 0.4s; }
+    .features-right .feature-card:nth-child(3) { animation-delay: 0.55s; }
 
-.popup-box textarea {
-    resize: vertical;
-    min-height: 100px;
-}
+    /* PRODUCTS */
+    .products {
+      padding: 6rem 2rem;
+      background: linear-gradient(135deg, #f8faf8 0%, #f1f5f1 100%);
+    }
 
-.star-select {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 1.5rem;
-}
+    .products h2 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #1a3b2e;
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+      position: relative;
+    }
 
-.star-select span {
-    font-size: 2rem;
-    cursor: pointer;
-    color: #ddd;
-    transition: var(--transition);
-}
+    .products h2::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #4caf7a, #2e7d5e);
+      margin: 1.2rem auto 0;
+      border-radius: 4px;
+    }
 
-.star-select span:hover,
-.star-select span.active {
-    color: #ffc107;
-    transform: scale(1.1);
-}
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+      margin-top: 3.5rem;
+    }
 
-.popup-btns {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 1rem;
-}
+    .product-card {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
 
-.popup-btns button {
-    padding: 10px 24px;
-    border: none;
-    border-radius: 50px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-}
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 40px -12px rgba(0, 128, 0, 0.25);
+    }
 
-.popup-btns button:first-child {
-    background: var(--gray-light);
-    color: var(--gray);
-}
+    .product-card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+      animation: imageLoad 0.5s ease;
+    }
 
-.popup-btns button:first-child:hover {
-    background: #ddd;
-}
+    .product-card:hover img {
+      transform: scale(1.08);
+    }
 
-.popup-btns button:last-child {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: white;
-}
+    .product-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26, 59, 46, 0.95);
+      backdrop-filter: blur(3px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      color: white;
+      text-align: center;
+    }
 
-.popup-btns button:last-child:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(45, 106, 45, 0.3);
-}
+    .product-card:hover .product-overlay {
+      opacity: 1;
+    }
 
-/* ========================================
-   RESPONSIVE DESIGN
-   ======================================== */
-@media (max-width: 992px) {
+    .product-overlay p {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease 0.1s;
+    }
+
+    .product-card:hover .product-overlay p {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .btn-view {
+      background: white;
+      color: #1a3b2e;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-view::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(76, 175, 122, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-view:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-view:hover {
+      background: #4caf7a;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(76, 175, 122, 0.3);
+    }
+
+    .product-card:hover .btn-view {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.2s;
+    }
+
+    .product-name {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: 0;
+      padding: 1.2rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      transform: translateY(0);
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-name {
+      transform: translateY(100%);
+    }
+
+    /* CLIENTS */
+    .trusted-section {
+      padding: 70px 20px;
+      text-align: center;
+      background: #f3f5f3;
+    }
+
+    .trusted-section h2 {
+      color: #f5c542;
+      margin-bottom: 40px;
+      font-size: 2.2rem;
+    }
+
+    .logo-slider {
+      overflow: hidden;
+      width: 250%;
+    }
+
+    .logo-track {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      white-space: nowrap;
+      animation: scroll 25s linear infinite;
+    }
+
+    .logo-card img {
+      height: 60px;
+      width: auto;
+      object-fit: contain;
+      opacity: 0.8;
+      transition: 0.3s;
+    }
+
+    .logo-card img:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    @keyframes scroll {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* REVIEWS SECTION */
+    .reviews-pro {
+      padding: 80px 0;
+      background: linear-gradient(135deg, var(--white), var(--gray-light));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reviews-pro::before {
+      content: '⭐';
+      position: absolute;
+      top: 10%;
+      right: 5%;
+      font-size: 8rem;
+      opacity: 0.03;
+      animation: floatRight 15s ease-in-out infinite;
+    }
+
+    .reviews-pro::after {
+      content: '💬';
+      position: absolute;
+      bottom: 10%;
+      left: 5%;
+      font-size: 8rem;
+      opacity: 0.03;
+      animation: floatLeft 15s ease-in-out infinite;
+    }
+
+    @keyframes floatRight {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes floatLeft {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(20px); }
+    }
+
     .reviews-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 60px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .review-summary {
+      background: var(--white);
+      border-radius: 32px;
+      padding: 2.5rem;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      transition: var(--transition);
+      border: 1px solid rgba(76, 174, 76, 0.1);
+    }
+
+    .review-summary:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+      border-color: rgba(76, 174, 76, 0.3);
+    }
+
+    .review-summary h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .review-summary h2::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-light), var(--primary));
+      border-radius: 3px;
+    }
+
+    .rating-box {
+      margin-bottom: 1.5rem;
+    }
+
+    .rating-box h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stars {
+      font-size: 1.5rem;
+      color: #ffc107;
+      letter-spacing: 3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .rating-box p {
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    .write-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .write-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(45, 106, 45, 0.3);
+    }
+
+    .bars {
+      text-align: left;
+      margin-top: 1rem;
+    }
+
+    .bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .bar span:first-child {
+      font-weight: 600;
+      color: var(--primary-dark);
+      min-width: 25px;
+    }
+
+    .progress {
+      flex: 1;
+      height: 8px;
+      background: var(--gray-light);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress div {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), var(--secondary-light));
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+
+    .review-slider {
+      background: var(--white);
+      border-radius: 32px;
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(76, 174, 76, 0.1);
+    }
+
+    .review-card {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: var(--gray-light);
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      transition: var(--transition);
+      animation: slideReview 0.5s ease;
+    }
+
+    .review-card:hover {
+      transform: translateX(10px);
+      background: rgba(76, 174, 76, 0.1);
+    }
+
+    .review-card img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .review-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .review-card span {
+      font-size: 0.75rem;
+      color: var(--gray);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .review-card p {
+      font-size: 0.9rem;
+      color: var(--dark);
+      line-height: 1.5;
+    }
+
+    @keyframes slideReview {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* POPUP */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+      padding: 20px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .popup-box {
+      background: var(--white);
+      max-width: 450px;
+      width: 100%;
+      padding: 2rem;
+      border-radius: 32px;
+      text-align: center;
+      animation: slideUp 0.4s ease;
+      box-shadow: var(--shadow-lg);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .popup-box h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 1.5rem;
+    }
+
+    .popup-box input,
+    .popup-box textarea {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(76, 174, 76, 0.2);
+      border-radius: 16px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .popup-box input:focus,
+    .popup-box textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(76, 174, 76, 0.1);
+    }
+
+    .popup-box textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .star-select {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .star-select span {
+      font-size: 2rem;
+      cursor: pointer;
+      color: #ddd;
+      transition: var(--transition);
+    }
+
+    .star-select span:hover,
+    .star-select span.active {
+      color: #ffc107;
+      transform: scale(1.1);
+    }
+
+    .popup-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .popup-btns button {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .popup-btns button:first-child {
+      background: var(--gray-light);
+      color: var(--gray);
+    }
+
+    .popup-btns button:first-child:hover {
+      background: #ddd;
+    }
+
+    .popup-btns button:last-child {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+
+    .popup-btns button:last-child:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(45, 106, 45, 0.3);
+    }
+
+    footer {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: var(--white);
+      text-align: center;
+      padding: 2.5rem;
+      position: relative;
+    }
+
+    footer::before {
+      content: '🌱';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      box-shadow: var(--shadow-sm);
+      line-height: 1;
+    }
+
+    @keyframes imageLoad {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @media (max-width: 992px) {
+      .features {
+        padding: 80px 0;
+      }
+
+      .features h2 {
+        font-size: 2.8rem;
+      }
+
+      .features-wrapper {
+        flex-direction: column;
+        gap: 50px;
+      }
+
+      .features-left,
+      .features-right {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+        max-width: 100%;
+      }
+
+      .feature-card {
+        flex: 0 1 calc(50% - 13px);
+        max-width: 280px;
+      }
+
+      .features-center img {
+        width: 280px;
+        height: 400px;
+      }
+
+      .features-left .feature-card,
+      .features-right .feature-card {
+        animation: fadeInUp 0.6s ease forwards;
+      }
+
+      .reviews-wrapper {
         grid-template-columns: 1fr;
         gap: 40px;
-    }
-    
-    .review-summary {
-        max-width: 500px;
-        margin: 0 auto;
-    }
-    
-    .review-slider {
+      }
+
+      .review-summary,
+      .review-slider {
         max-width: 600px;
         margin: 0 auto;
+      }
     }
-}
 
-@media (max-width: 768px) {
-    .reviews-pro {
-        padding: 60px 0;
-    }
-    
-    .review-summary h2 {
-        font-size: 1.5rem;
-    }
-    
-    .rating-box h1 {
-        font-size: 3rem;
-    }
-    
-    .stars {
-        font-size: 1.2rem;
-    }
-    
-    .review-card {
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 10px;
         padding: 1rem;
-    }
-    
-    .review-card img {
+      }
+
+      .nav-links {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .hero h1 {
+        font-size: 38px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .about {
+        padding-top: 80px;
+      }
+
+      .features {
+        padding: 60px 0;
+      }
+
+      .features h2 {
+        font-size: 2.4rem;
+        margin-bottom: 40px;
+      }
+
+      .features h2::after {
+        width: 60px;
+        height: 3px;
+      }
+
+      .features-left,
+      .features-right {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .feature-card {
+        flex: 0 1 100%;
+        max-width: 350px;
+        padding: 25px 20px;
+      }
+
+      .feature-card h3 {
+        font-size: 1.3rem;
+      }
+
+      .features-center img {
+        width: 240px;
+        height: 350px;
+        border-radius: 25px;
+      }
+
+      .products {
+        padding: 4rem 1.5rem;
+      }
+
+      .products h2 {
+        font-size: 2.2rem;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.8rem;
+      }
+
+      .product-card img {
+        height: 240px;
+      }
+
+      .product-overlay p {
+        font-size: 0.9rem;
+      }
+
+      .btn-view {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .reviews-pro {
+        padding: 60px 0;
+      }
+
+      .review-summary h2 {
+        font-size: 1.5rem;
+      }
+
+      .rating-box h1 {
+        font-size: 3rem;
+      }
+
+      .stars {
+        font-size: 1.2rem;
+      }
+
+      .review-card {
+        padding: 1rem;
+      }
+
+      .review-card img {
         width: 40px;
         height: 40px;
-    }
-    
-    .review-card h4 {
+      }
+
+      .review-card h4 {
         font-size: 0.9rem;
-    }
-    
-    .review-card p {
+      }
+
+      .review-card p {
         font-size: 0.85rem;
-    }
-    
-    .popup-box {
+      }
+
+      .popup-box {
         padding: 1.5rem;
-    }
-    
-    .popup-box h3 {
+      }
+
+      .popup-box h3 {
         font-size: 1.5rem;
-    }
-    
-    .star-select span {
+      }
+
+      .star-select span {
         font-size: 1.5rem;
+      }
     }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 30px;
+      }
+
+      .products {
+        padding: 3rem 1rem;
+      }
+
+      .products h2 {
+        font-size: 1.8rem;
+      }
+
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .product-overlay {
+        padding: 1.5rem;
+      }
+
+      .product-overlay p {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .features {
+        padding: 50px 0;
+      }
+
+      .features h2 {
+        font-size: 2rem;
+      }
+
+      .features-center img {
+        width: 200px;
+        height: 300px;
+        border-radius: 20px;
+      }
+
+      .feature-card {
+        padding: 20px 15px;
+        max-width: 300px;
+      }
+
+      .feature-card p {
+        font-size: 0.95rem;
+      }
+
+      .review-summary {
+        padding: 1.5rem;
+      }
+
+      .write-btn {
+        padding: 10px 24px;
+        font-size: 0.9rem;
+      }
+
+      .bar {
+        gap: 8px;
+      }
+
+      .bar span:first-child {
+        font-size: 0.85rem;
+      }
+
+      .review-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .review-card img {
+        margin: 0 auto;
+      }
+
+      .popup-btns {
+        flex-direction: column;
+      }
+
+      .popup-btns button {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .feature-card,
+      .features-center img,
+      .features h2::after {
+        transition: all 0.3s ease;
+      }
+    }
+
+
+    .chatbot-toggle {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #2d6a2d, #4cae4c);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  transition: 0.3s;
+}
+
+.chatbot-toggle:hover {
+  transform: scale(1.08);
+}
+
+.chatbot-container {
+  position: fixed;
+  bottom: 95px;
+  right: 25px;
+  width: 350px;
+  max-height: 520px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  z-index: 9999;
+  font-family: 'Poppins', sans-serif;
+}
+
+.chatbot-header {
+  background: linear-gradient(135deg, #1a4a1a, #4cae4c);
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatbot-header span {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chatbot-header button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.chatbot-body {
+  padding: 15px;
+  height: 320px;
+  overflow-y: auto;
+  background: #f8faf8;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bot-message,
+.user-message {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.bot-message {
+  background: #e8f0e5;
+  color: #1a2a1a;
+  align-self: flex-start;
+}
+
+.user-message {
+  background: #2d6a2d;
+  color: white;
+  align-self: flex-end;
+}
+
+.chatbot-footer {
+  display: flex;
+  border-top: 1px solid #ddd;
+  background: white;
+}
+
+.chatbot-footer input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.chatbot-footer button {
+  background: #2d6a2d;
+  color: white;
+  border: none;
+  padding: 0 18px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.chatbot-footer button:hover {
+  background: #1f531f;
 }
 
 @media (max-width: 480px) {
-    .review-summary {
-        padding: 1.5rem;
-    }
-    
-    .write-btn {
-        padding: 10px 24px;
-        font-size: 0.9rem;
-    }
-    
-    .bar {
-        gap: 8px;
-    }
-    
-    .bar span:first-child {
-        font-size: 0.85rem;
-    }
-    
-    .review-card {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .review-card img {
-        margin: 0 auto;
-    }
-    
-    .popup-btns {
-        flex-direction: column;
-    }
-    
-    .popup-btns button {
-        width: 100%;
-    }
-}
-  
-</style>
+  .chatbot-container {
+    width: 90%;
+    right: 5%;
+    bottom: 90px;
+  }
 
+  .chatbot-toggle {
+    right: 15px;
+    bottom: 15px;
+  }
+}
+  </style>
 </head>
 
 <body>
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="logo">🌱 Micro Green Garden House</div>
+      <ul class="nav-links">
+        <li><a href="#home" class="active">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="product.html">Products</a></li>
+      </ul>
+    </div>
+  </nav>
 
-    <!-- NAVBAR -->
-      <nav class="navbar">
-        <div class="nav-container">
-        <div class="logo">🌱 Micro Green Garden House</div>
-        <ul class="nav-links">
-          <li><a href="home.html" class="active">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="product.html">Products</a></li>
-          <li><a href="">Features</a></li>
-        </ul>
-        </div>
-      </nav>
-      
   <!-- HERO -->
-  <section class="hero">
-  <div class="hero-content">
-  <div class="badge">🌱 Fresh Daily</div>
-  <h1>Premium Microgreens <br><span>Sri Lanka</span></h1>
-  <p>Fresh, natural and chemical-free microgreens delivered across Sri Lanka.</p>
-  
-  <div class="stats">
-  <div><h2>10+</h2><span>Years</span></div>
-  <div><h2>50+</h2><span>Clients</span></div>
-  <div><h2>24/7</h2><span>Supply</span></div>
-  </div>
-  
-  <a href="#products" class="btn-primary">Explore →</a>
-  <a href="about.html" class="btn-secondary">Learn More</a>
-  </div>
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="badge">🌱 Fresh Daily</div>
+      <h1>Premium Microgreens <br><span>Sri Lanka</span></h1>
+      <p>Fresh, natural and chemical-free microgreens delivered across Sri Lanka.</p>
+
+      <div class="stats">
+        <div><h2>10+</h2><span>Years</span></div>
+        <div><h2>50+</h2><span>Clients</span></div>
+        <div><h2>24/7</h2><span>Supply</span></div>
+      </div>
+
+      <a href="product.html" class="btn-primary">Explore →</a>
+      <a href="#about" class="btn-secondary">Learn More</a>
+    </div>
   </section>
-  
 
-
-
-
-<!-- ABOUT -->
-
-<section class="about" id="about">
-
-<div class="container about-container">
-
-<div class="about-text">
-<h2>About Micro Green Garden House</h2>
-
-<p>
-Micro Green Garden House is a leading producer and supplier of premium microgreens in Sri Lanka with more than 10 years of experience. 
-We grow natural and chemical-free microgreens using sustainable farming methods and controlled growing environments.
-
-Our products are supplied to luxury hotels, restaurants, cafés, and supermarkets across Sri Lanka while maintaining the highest quality and hygiene standards.
-</p>
-</div>
-
-<div class="about-image">
-<img src="../img/About.jpeg" alt="Microgreens">
-</div>
-
-</div>
-
-</section>
-
-
-   <!-- FEATURES -->
-<section class="features">
-
-  <div class="container">
-
-    <h2>Why Choose Us</h2>
-
-    <div class="features-wrapper">
-
-      <!-- Left Features -->
-      <div class="features-left">
-        <div class="feature-card">
-          🌱<h3>Fresh & Natural</h3>
-          <p>Grown without chemicals for purity and health.</p>
-        </div>
-
-        <div class="feature-card">
-          🚚<h3>Island-Wide Delivery</h3>
-          <p>We deliver fresh microgreens anywhere in Sri Lanka.</p>
-        </div>
-
-        <div class="feature-card">
-          🏨<h3>Trusted by Hotels</h3>
-          <p>Luxury hotels and restaurants rely on us.</p>
-        </div>
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="container about-container">
+      <div class="about-text">
+        <h2>About Micro Green Garden House</h2>
+        <p>
+          Micro Green Garden House is a leading producer and supplier of premium microgreens in Sri Lanka with more than 10 years of experience.
+          We grow natural and chemical-free microgreens using sustainable farming methods and controlled growing environments.
+        </p>
+        <p>
+          Our products are supplied to luxury hotels, restaurants, cafés, and supermarkets across Sri Lanka while maintaining the highest quality and hygiene standards.
+        </p>
       </div>
 
-      <!-- Central Image -->
-      <div class="features-center">
-        <img src="../img/main_feature.PNG" alt="Microgreens">
+      <div class="about-image">
+        <img src="../img/About.jpeg" alt="Microgreens">
       </div>
-
-      <!-- Right Features -->
-      <div class="features-right">
-        <div class="feature-card">
-          ⭐<h3>Premium Quality</h3>
-          <p>High standards in quality and hygiene.</p>
-        </div>
-
-        <div class="feature-card">
-          🥗<h3>High Nutritional Value</h3>
-          <p>Rich in vitamins and nutrients.</p>
-        </div>
-
-        <div class="feature-card">
-          🌿<h3>10+ Years Experience</h3>
-          <p>Over a decade of expertise in microgreens.</p>
-        </div>
-      </div>
-
     </div>
+  </section>
 
-  </div>
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="container">
+      <h2>Why Choose Us</h2>
 
-</section>
+      <div class="features-wrapper">
+        <div class="features-left">
+          <div class="feature-card">
+            <h3>🌱 Fresh & Natural</h3>
+            <p>Grown without chemicals for purity and health.</p>
+          </div>
 
+          <div class="feature-card">
+            <h3>🚚 Island-Wide Delivery</h3>
+            <p>We deliver fresh microgreens anywhere in Sri Lanka.</p>
+          </div>
 
-<!-- PRODUCTS -->
-
-<section class="products" id="products">
-
-  <div class="container">
-
-    <h2>Our Products</h2>
-
-    <div class="product-grid">
-
-      <div class="product-card">
-        <img src="../img/IMG_7720.AVIF" alt="Microgreen">
-        <div class="product-overlay">
-          <p>Fresh, nutrient-packed microgreens grown in a clean greenhouse environment. 
-                Perfect for salads, sandwiches, and gourmet dishes. </p>
-          <button class="btn-view">View Product</button>
+          <div class="feature-card">
+            <h3>🏨 Trusted by Hotels</h3>
+            <p>Luxury hotels and restaurants rely on us.</p>
+          </div>
         </div>
-        <h3 class="product-name">Microgreen</h3>
-      </div>
 
-      <div class="product-card">
-        <img src="../img/IMG_7718.JPG.jpeg" alt="Lettuce">
-        <div class="product-overlay">
-          <p>Crisp and fresh lettuce grown with natural methods for better taste and quality. 
-                Ideal for salads, burgers, wraps, and healthy meals. 
-                Harvested daily to ensure maximum freshness.</p>
-          <button class="btn-view">View Product</button>
+        <div class="features-center">
+          <img src="../img/main_feature.PNG" alt="Microgreens">
         </div>
-        <h3 class="product-name">Lettuce</h3>
-      </div>
 
-      <div class="product-card">
-        <img src="../img/IMG_7719.PNG" alt="Peppers">
-        <div class="product-overlay">
-          <p>Premium greenhouse peppers including sweet Bell Peppers and spicy Jalapeños. 
-                Bright, crunchy, and full of flavor, perfect for cooking, salads, and fresh dishes.</p>
-          <button class="btn-view">View Product</button>
+        <div class="features-right">
+          <div class="feature-card">
+            <h3>⭐ Premium Quality</h3>
+            <p>High standards in quality and hygiene.</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>🥗 High Nutritional Value</h3>
+            <p>Rich in vitamins and nutrients.</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>🌿 10+ Years Experience</h3>
+            <p>Over a decade of expertise in microgreens.</p>
+          </div>
         </div>
-        <h3 class="product-name">Peppers</h3>
       </div>
-
     </div>
+  </section>
 
-  </div>
+  <!-- PRODUCTS -->
+  <section class="products" id="products">
+    <div class="container">
+      <h2>Our Products</h2>
 
-</section>
-<!-- CLIENTS -->
-<section class="trusted-section">
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="../img/IMG_7720.AVIF" alt="Microgreen">
+          <div class="product-overlay">
+            <p>
+              Fresh, nutrient-packed microgreens grown in a clean greenhouse environment.
+              Perfect for salads, sandwiches, and gourmet dishes.
+            </p>
+            <a href="product.html#microgreen" class="btn-view">View Product</a>
+          </div>
+          <h3 class="product-name">Microgreen</h3>
+        </div>
+
+        <div class="product-card">
+          <img src="../img/IMG_7718.JPG.jpeg" alt="Lettuce">
+          <div class="product-overlay">
+            <p>
+              Crisp and fresh lettuce grown with natural methods for better taste and quality.
+              Ideal for salads, burgers, wraps, and healthy meals.
+              Harvested daily to ensure maximum freshness.
+            </p>
+            <a href="product.html#lettuce" class="btn-view">View Product</a>
+          </div>
+          <h3 class="product-name">Lettuce</h3>
+        </div>
+
+        <div class="product-card">
+          <img src="../img/IMG_7719.PNG" alt="Peppers">
+          <div class="product-overlay">
+            <p>
+              Premium greenhouse peppers including sweet Bell Peppers and spicy Jalapeños.
+              Bright, crunchy, and full of flavor, perfect for cooking, salads, and fresh dishes.
+            </p>
+             <a href="product.html#peppers" class="btn-view">View Product</a>
+          </div>
+          <h3 class="product-name">Peppers</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTS -->
+  <section class="trusted-section">
     <h2>Trusted By</h2>
-  
+
     <div class="logo-slider">
       <div class="logo-track">
-  
-        <!-- ORIGINAL LOGOS -->
-        <div class="logo-card"><img src="../img/cinnamon.jpeg" alt=""></div>
-        <div class="logo-card"><img src="../img/kandy-myst.png" alt=""></div>
-        <div class="logo-card"><img src="../img/theva.jpeg" alt=""></div>
-        <div class="logo-card"><img src="../img/mr.png" alt=""></div>
-        <div class="logo-card"><img src="../img/err.png" alt=""></div>
-        <div class="logo-card"><img src="../img/golden_crown_black.png" alt=""></div>
-        <div class="logo-card"><img src="../img/luuv.png" alt=""></div>
-        <div class="logo-card"><img src="../img/taruvillaslogo.jpg.webp" alt=""></div>
-        <div class="logo-card"><img src="../img/er.jpeg" alt=""></div>
-        <div class="logo-card"><img src="../img/ht.png" alt=""></div>
-        <div class="logo-card"><img src="../img/gk.jpeg" alt=""></div>
-  
-        <!-- DUPLICATE (for infinite scroll) -->
-        <div class="logo-card"><img src="../img/cinnamon.jpeg" alt=""></div>
-        <div class="logo-card"><img src="../img/kandy-myst.png" alt=""></div>
-        <div class="logo-card"><img src="../img/theva.jpeg" alt=""></div>
-        <div class="logo-card"><img src="../img/mr.png" alt=""></div>
-        <div class="logo-card"><img src="../img/err.png" alt=""></div>
-        <div class="logo-card"><img src="../img/golden_crown_black.png" alt=""></div>
-        <div class="logo-card"><img src="../img/luuv.png" alt=""></div>
-        <div class="logo-card"><img src="../img/taruvillaslogo.jpg.webp" alt=""></div>
-        <div class="logo-card"><img src="../img/er.jpeg" alt=""></div>
-        <div class="logo-card"><img src="../img/ht.png" alt=""></div>
-        <div class="logo-card"><img src="../img/gk.jpeg" alt=""></div>
-  
+        <div class="logo-card"><img src="../img/cinnamon.jpeg" alt="Cinnamon"></div>
+        <div class="logo-card"><img src="../img/kandy-myst.png" alt="Kandy Myst"></div>
+        <div class="logo-card"><img src="../img/theva.jpeg" alt="Theva"></div>
+        <div class="logo-card"><img src="../img/mr.png" alt="MR"></div>
+        <div class="logo-card"><img src="../img/err.png" alt="ERR"></div>
+        <div class="logo-card"><img src="../img/golden_crown_black.png" alt="Golden Crown"></div>
+        <div class="logo-card"><img src="../img/luuv.png" alt="Luuv"></div>
+        <div class="logo-card"><img src="../img/taruvillaslogo.jpg.webp" alt="Taru Villas"></div>
+        <div class="logo-card"><img src="../img/er.jpeg" alt="ER"></div>
+        <div class="logo-card"><img src="../img/ht.png" alt="HT"></div>
+        <div class="logo-card"><img src="../img/gk.jpeg" alt="GK"></div>
+
+        <div class="logo-card"><img src="../img/cinnamon.jpeg" alt="Cinnamon"></div>
+        <div class="logo-card"><img src="../img/kandy-myst.png" alt="Kandy Myst"></div>
+        <div class="logo-card"><img src="../img/theva.jpeg" alt="Theva"></div>
+        <div class="logo-card"><img src="../img/mr.png" alt="MR"></div>
+        <div class="logo-card"><img src="../img/err.png" alt="ERR"></div>
+        <div class="logo-card"><img src="../img/golden_crown_black.png" alt="Golden Crown"></div>
+        <div class="logo-card"><img src="../img/luuv.png" alt="Luuv"></div>
+        <div class="logo-card"><img src="../img/taruvillaslogo.jpg.webp" alt="Taru Villas"></div>
+        <div class="logo-card"><img src="../img/er.jpeg" alt="ER"></div>
+        <div class="logo-card"><img src="../img/ht.png" alt="HT"></div>
+        <div class="logo-card"><img src="../img/gk.jpeg" alt="GK"></div>
       </div>
     </div>
   </section>
 
-      <section class="reviews-pro">
-
-      <div class="reviews-wrapper">
-
-      <!-- LEFT SIDE -->
+  <!-- REVIEWS -->
+  <section class="reviews-pro">
+    <div class="reviews-wrapper">
       <div class="review-summary">
+        <h2>Google review summary</h2>
 
-      <h2>Google review summary</h2>
+        <div class="rating-box">
+          <h1 id="avgRating">4.9</h1>
+          <div class="stars">★★★★★</div>
+          <p id="totalReviews">120 reviews</p>
+        </div>
 
-      <div class="rating-box">
-      <h1 id="avgRating">4.9</h1>
-      <div class="stars">★★★★★</div>
-      <p id="totalReviews">120 reviews</p>
+        <button class="write-btn" onclick="openPopup()">Write a review</button>
+
+        <div class="bars">
+          <div class="bar"><span>5</span><div class="progress"><div style="width: 90%"></div></div></div>
+          <div class="bar"><span>4</span><div class="progress"><div style="width: 7%"></div></div></div>
+          <div class="bar"><span>3</span><div class="progress"><div style="width: 2%"></div></div></div>
+          <div class="bar"><span>2</span><div class="progress"><div style="width: 1%"></div></div></div>
+          <div class="bar"><span>1</span><div class="progress"><div style="width: 1%"></div></div></div>
+        </div>
       </div>
 
-      <button class="write-btn" onclick="openPopup()">Write a review</button>
-
-      <div class="bars">
-      <div class="bar"><span>5</span><div class="progress"><div style="width:90%"></div></div></div>
-      <div class="bar"><span>4</span><div class="progress"><div style="width:7%"></div></div></div>
-      <div class="bar"><span>3</span><div class="progress"><div style="width:2%"></div></div></div>
-      <div class="bar"><span>2</span><div class="progress"><div style="width:1%"></div></div></div>
-      <div class="bar"><span>1</span><div class="progress"><div style="width:1%"></div></div></div>
-      </div>
-
-      </div>
-
-      <!-- RIGHT SIDE -->
       <div class="review-slider" id="reviewSlider">
+        <div class="review-card">
+          <img src="https://i.pravatar.cc/40?img=1" alt="Reviewer 1">
+          <div>
+            <h4>Kasun Gunarathna</h4>
+            <span>★★★★★ • 2 days ago</span>
+            <p>Very fresh microgreens. High quality and fast delivery.</p>
+          </div>
+        </div>
 
-      <div class="review-card">
-      <img src="https://i.pravatar.cc/40?img=1">
-      <div>
-      <h4>Kasun Gunarathna</h4>
-      <span>★★★★★ • 2 days ago</span>
-      <p>Very fresh microgreens. High quality and fast delivery.</p>
-      </div>
-      </div>
+        <div class="review-card">
+          <img src="https://i.pravatar.cc/40?img=2" alt="Reviewer 2">
+          <div>
+            <h4>Chef Nimal</h4>
+            <span>★★★★★ • 1 week ago</span>
+            <p>Best supplier for restaurants. Highly recommended.</p>
+          </div>
+        </div>
 
-      <div class="review-card">
-      <img src="https://i.pravatar.cc/40?img=2">
-      <div>
-      <h4>Chef Nimal</h4>
-      <span>★★★★★ • 1 week ago</span>
-      <p>Best supplier for restaurants. Highly recommended.</p>
+        <div class="review-card">
+          <img src="https://i.pravatar.cc/40?img=3" alt="Reviewer 3">
+          <div>
+            <h4>Hotel Manager</h4>
+            <span>★★★★★ • 3 weeks ago</span>
+            <p>Consistent quality and great service.</p>
+          </div>
+        </div>
       </div>
-      </div>
-
-      <div class="review-card">
-      <img src="https://i.pravatar.cc/40?img=3">
-      <div>
-      <h4>Hotel Manager</h4>
-      <span>★★★★★ • 3 weeks ago</span>
-      <p>Consistent quality and great service.</p>
-      </div>
-      </div>
-
     </div>
+  </section>
 
-    </div>
-    </section>
-
-    <!-- POPUP -->
-<div class="popup" id="popup">
+  <!-- POPUP -->
+  <div class="popup" id="popup">
     <div class="popup-box">
-        <h3>Write a Review</h3>
-        <input type="text" id="name" placeholder="Your Name">
-        <div class="star-select" id="starSelect">
-            <span onclick="setRating(1)">☆</span>
-            <span onclick="setRating(2)">☆</span>
-            <span onclick="setRating(3)">☆</span>
-            <span onclick="setRating(4)">☆</span>
-            <span onclick="setRating(5)">☆</span>
-        </div>
-        <textarea id="reviewText" placeholder="Write your experience..."></textarea>
-        <div class="popup-btns">
-            <button onclick="closePopup()">Cancel</button>
-            <button onclick="addReview()">Post Review</button>
-        </div>
+      <h3>Write a Review</h3>
+      <input type="text" id="name" placeholder="Your Name">
+      <div class="star-select" id="starSelect">
+        <span onclick="setRating(1)">☆</span>
+        <span onclick="setRating(2)">☆</span>
+        <span onclick="setRating(3)">☆</span>
+        <span onclick="setRating(4)">☆</span>
+        <span onclick="setRating(5)">☆</span>
+      </div>
+      <textarea id="reviewText" placeholder="Write your experience..."></textarea>
+      <div class="popup-btns">
+        <button onclick="closePopup()">Cancel</button>
+        <button onclick="addReview()">Post Review</button>
+      </div>
     </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Micro Green Garden House</p>
+  </footer>
+
+  <script>
+    let selectedRating = 0;
+
+    const popup = document.getElementById('popup');
+    const starSelect = document.getElementById('starSelect');
+    const stars = starSelect.querySelectorAll('span');
+    const reviewSlider = document.getElementById('reviewSlider');
+    const totalReviews = document.getElementById('totalReviews');
+    const navbar = document.getElementById('navbar');
+
+    function openPopup() {
+      popup.style.display = 'flex';
+    }
+
+    function closePopup() {
+      popup.style.display = 'none';
+      document.getElementById('name').value = '';
+      document.getElementById('reviewText').value = '';
+      selectedRating = 0;
+      updateStarDisplay();
+    }
+
+    function setRating(rating) {
+      selectedRating = rating;
+      updateStarDisplay();
+    }
+
+    function updateStarDisplay() {
+      stars.forEach((star, index) => {
+        if (index < selectedRating) {
+          star.textContent = '★';
+          star.classList.add('active');
+        } else {
+          star.textContent = '☆';
+          star.classList.remove('active');
+        }
+      });
+    }
+
+    function addReview() {
+      const name = document.getElementById('name').value.trim();
+      const reviewText = document.getElementById('reviewText').value.trim();
+
+      if (name === '' || reviewText === '' || selectedRating === 0) {
+        alert('Please enter your name, select a rating, and write a review.');
+        return;
+      }
+
+      const reviewCard = document.createElement('div');
+      reviewCard.className = 'review-card';
+
+      const starsText = '★'.repeat(selectedRating) + '☆'.repeat(5 - selectedRating);
+
+      reviewCard.innerHTML = `
+        <img src="https://i.pravatar.cc/40?u=${encodeURIComponent(name)}" alt="${name}">
+        <div>
+          <h4>${name}</h4>
+          <span>${starsText} • Just now</span>
+          <p>${reviewText}</p>
+        </div>
+      `;
+
+      reviewSlider.prepend(reviewCard);
+
+      let currentReviews = parseInt(totalReviews.textContent) || 120;
+      currentReviews++;
+      totalReviews.textContent = currentReviews + ' reviews';
+
+      closePopup();
+    }
+
+    window.addEventListener('click', function (e) {
+      if (e.target === popup) {
+        closePopup();
+      }
+    });
+
+    window.addEventListener('scroll', function () {
+      if (window.scrollY > 30) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+  </script>
+
+<!-- CHATBOT -->
+<div class="chatbot-toggle" onclick="toggleChatbot()">💬</div>
+
+<div class="chatbot-container" id="chatbotContainer">
+  <div class="chatbot-header">
+    <span>Micro Green Assistant</span>
+    <button onclick="toggleChatbot()">✖</button>
+  </div>
+
+  <div class="chatbot-body" id="chatbotBody">
+    <div class="bot-message">
+      Hello 👋 Welcome to Micro Green Garden House. How can I help you?
+    </div>
+  </div>
+
+  <div class="chatbot-footer">
+    <input
+      type="text"
+      id="chatInput"
+      placeholder="Type your message..."
+      onkeypress="handleKeyPress(event)"
+    >
+    <button onclick="sendMessage()">Send</button>
+  </div>
 </div>
 
-
-<!-- FOOTER -->
-
-<footer>
-
-<p>© 2026 Micro Green Garden House</p>
-
-</footer>
-
-
-<script src="home.js"></script>
+<link rel="stylesheet" href="chatbot.css">
+<script src="chatbot.js"></script>
 
 </body>
-
 </html>
- 
