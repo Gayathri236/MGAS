@@ -1,91 +1,92 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = sanitize($_POST['action'] ?? '');
-    
+
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+require_once '../config/database.php';
+require_once '../config/functions.php';
+
+$database = new Database();
+$db = $database->getConnection();
+
+// Request method එක සහ Action එක ලබා ගැනීම
+$method = $_SERVER['REQUEST_METHOD'];
+$action = $_GET['action'] ?? '';
+
+// 1. POST රික්වෙස්ට් සඳහා (Login & Logout)
+if ($method === 'POST') {
     switch ($action) {
         case 'login':
-            handleLogin();
+            $data = json_decode(file_get_contents('php://input'), true);
+            $email = sanitize($data['email'] ?? '');
+            $password = $data['password'] ?? '';
+
+            if (empty($email) || empty($password)) {
+                response(['error' => 'Email and password are required'], 400);
+            }
+
+            $stmt = $db->prepare("SELECT * FROM admins WHERE email = ? AND is_active = 1");
+            $stmt->execute([$email]);
+            $admin = $stmt->fetch();
+
+            if ($admin && password_verify($password, $admin['password'])) {
+                $_SESSION['admin_id'] = $admin['id'];
+                $_SESSION['admin_name'] = $admin['name'];
+                $_SESSION['admin_email'] = $admin['email'];
+                $_SESSION['admin_role'] = $admin['role'];
+                $_SESSION['admin_logged_in'] = true;
+
+                $updateStmt = $db->prepare("UPDATE admins SET last_login = NOW() WHERE id = ?");
+                $updateStmt->execute([$admin['id']]);
+
+                response([
+                    'success' => true,
+                    'message' => 'Login successful',
+                    'admin' => [
+                        'id' => $admin['id'],
+                        'name' => $admin['name'],
+                        'email' => $admin['email'],
+                        'role' => $admin['role']
+                    ]
+                ]);
+            } else {
+                response(['error' => 'Invalid email or password'], 401);
+            }
             break;
+
         case 'logout':
-            handleLogout();
+            session_destroy();
+            response(['success' => true, 'message' => 'Logged out successfully']);
             break;
-        case 'check_session':
-            checkSession();
-            break;
+            
         default:
-            jsonResponse(false, 'Invalid action');
+            response(['error' => 'Invalid POST action'], 400);
     }
-}
+} 
 
-function handleLogin() {
-    $conn = connectDB();
-    
-    $username = sanitize($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-    
-    if (empty($username) || empty($password)) {
-        jsonResponse(false, 'Please fill in all fields');
-    }
-    
-    $stmt = $conn->prepare("SELECT id, username, email, password, full_name, role, status FROM admins WHERE username = ? OR email = ?");
-    $stmt->bind_param("ss", $username, $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 0) {
-        jsonResponse(false, 'Invalid credentials');
-    }
-    
-    $admin = $result->fetch_assoc();
-    
-    if ($admin['status'] === 'blocked') {
-        jsonResponse(false, 'Your account has been blocked');
-    }
-    
-    if (!password_verify($password, $admin['password'])) {
-        jsonResponse(false, 'Invalid credentials');
-    }
-    
-    $_SESSION['admin_id'] = $admin['id'];
-    $_SESSION['admin_username'] = $admin['username'];
-    $_SESSION['admin_name'] = $admin['full_name'];
-    $_SESSION['admin_role'] = $admin['role'];
-    
-    $updateStmt = $conn->prepare("UPDATE admins SET last_login = NOW() WHERE id = ?");
-    $updateStmt->bind_param("i", $admin['id']);
-    $updateStmt->execute();
-    $updateStmt->close();
-    
-    logActivity($conn, $admin['id'], 'login', 'auth');
-    
-    jsonResponse(true, 'Login successful', [
-        'id' => $admin['id'],
-        'name' => $admin['full_name'],
-        'role' => $admin['role']
-    ]);
-}
-
-function handleLogout() {
-    if (isset($_SESSION['admin_id'])) {
-        $conn = connectDB();
-        logActivity($conn, $_SESSION['admin_id'], 'logout', 'auth');
-        $conn->close();
-    }
-    
-    session_destroy();
-    jsonResponse(true, 'Logged out successfully');
-}
-
-function checkSession() {
-    if (isLoggedIn()) {
-        jsonResponse(true, 'Session active', [
-            'id' => $_SESSION['admin_id'],
-            'name' => $_SESSION['admin_name'],
-            'role' => $_SESSION['admin_role']
-        ]);
+else if ($method === 'GET') {
+    if ($action === 'check') {
+        if (isLoggedIn()) {
+            response([
+                'logged_in' => true,
+                'admin' => getCurrentAdmin()
+            ]);
+        } else {
+            response(['logged_in' => false]);
+        }
     } else {
-        jsonResponse(false, 'No active session');
+        response(['error' => 'Invalid GET action'], 400);
     }
 }
+
+
+response(['error' => 'Method not allowed'], 405);
+?>

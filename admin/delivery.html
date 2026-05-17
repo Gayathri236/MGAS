@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery - Microgreens Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .tracking-link {
+            font-family: monospace;
+            font-size: 12px;
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .tracking-link:hover {
+            background: #e0e0e0;
+        }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .badge-processing { background: #cfe2ff; color: #084298; }
+        .badge-shipped { background: #cfe2ff; color: #084298; }
+        .badge-delivered { background: #d1e7dd; color: #0f5132; }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 20h10"></path>
+                        <path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+                        <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path>
+                        <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-title">
+                    <h2>Microgreens</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                        Dashboard
+                    </a>
+                    <a href="ai.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z"></path>
+                            <path d="M12 6v4l2 2"></path>
+                            <path d="M12 16h.01"></path>
+                        </svg>
+                        AI Analytics
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="products.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                        Products
+                    </a>
+                    <a href="customers.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Customers
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        Orders
+                    </a>
+                    <a href="inventory.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        Inventory
+                    </a>
+                    <a href="delivery.html" class="nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        Delivery
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="reports.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Reports
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="userName">Admin User</div>
+                        <div class="sidebar-user-role" id="userRole">Administrator</div>
+                    </div>
+                    <button class="btn-icon sm" onclick="logout()" title="Logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        
+        <div class="mobile-menu-overlay" id="mobileOverlay"></div>
+        
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <h1 style="font-size: 20px; font-weight: 600;">Delivery Management</h1>
+                </div>
+            </header>
+            
+            <div class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Delivery Management</h1>
+                        <p class="page-subtitle">Generate tracking links and manage order deliveries</p>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid" style="margin-bottom:24px;">
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon yellow">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Pending</h4>
+                            <h2 id="pendingCount">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Processing</h4>
+                            <h2 id="processingCount">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon purple">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Shipped</h4>
+                            <h2 id="shippedCount">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon green">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Delivered</h4>
+                            <h2 id="deliveredCount">0</h2>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Filters -->
+                <div class="filters">
+                    <div class="filter-item search-box" style="flex:1; min-width:250px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="form-input" placeholder="Search orders..." id="searchInput" oninput="debounceSearch()">
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select" id="statusFilter" onchange="loadOrders()">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <input type="date" class="form-input" id="dateFrom" onchange="loadOrders()">
+                    </div>
+                    <div class="filter-item">
+                        <input type="date" class="form-input" id="dateTo" onchange="loadOrders()">
+                    </div>
+                </div>
+                
+                <!-- Orders Table - Same as Orders Page -->
+                <div class="card">
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Tracking Link</th>
+                                    <th style="width:100px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTable">
+                                <tr>
+                                    <td colspan="8"><div class="loading"><div class="spinner"></div></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer" id="paginationInfo" style="display:none;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span id="paginationText"></span>
+                            <div class="pagination" id="pagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Generate Tracking Modal -->
+    <div class="modal-overlay" id="trackingModal">
+        <div class="modal" style="max-width:500px;">
+            <div class="modal-header">
+                <h3>Generate Tracking Link</h3>
+                <button class="modal-close" onclick="closeTrackingModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="trackingModalContent">
+                <div class="loading"><div class="spinner"></div></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeTrackingModal()">Close</button>
+                <button class="btn btn-primary" onclick="copyTrackingLink()">Copy Link</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentPage = 1;
+        let searchTimeout;
+        let generatedTrackingLink = '';
+        let generatedTrackingNumber = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof checkAuth === 'function') checkAuth();
+            loadStats();
+            loadOrders();
+            setupMobileMenu();
+        });
+
+        function setupMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const menuToggle = document.getElementById('menuToggle');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                    overlay.classList.toggle('active');
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                });
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('api/orders.php?action=stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const counts = data.stats.status_counts;
+                    document.getElementById('pendingCount').textContent = counts.pending || 0;
+                    document.getElementById('processingCount').textContent = counts.processing || 0;
+                    document.getElementById('shippedCount').textContent = counts.shipped || 0;
+                    document.getElementById('deliveredCount').textContent = counts.delivered || 0;
+                }
+            } catch (error) {
+                console.error('Failed to load stats');
+            }
+        }
+
+        async function loadOrders(page = 1) {
+            const search = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const tbody = document.getElementById('ordersTable');
+            
+            tbody.innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
+            
+            try {
+                let url = `api/orders.php?action=list&page=${page}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                if (status) url += `&status=${status}`;
+                if (dateFrom) url += `&date_from=${dateFrom}`;
+                if (dateTo) url += `&date_to=${dateTo}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentPage = data.pagination.page;
+                    
+                    if (data.orders.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg><h4>No orders found</h4></div></td></tr>';
+                        document.getElementById('paginationInfo').style.display = 'none';
+                    } else {
+                        tbody.innerHTML = data.orders.map(order => `
+                            <tr>
+                                <td><strong>${order.order_number}</strong></td>
+                                <td>
+                                    <div style="font-weight:500;">${order.customer_name || 'Guest'}</div>
+                                    <div style="font-size:12px;color:var(--text-light);">${order.customer_email || ''}</div>
+                                </div>
+                                <td>${order.items ? order.items.length : 0} items</div>
+                                <td class="price">${formatCurrency(order.total)}</div>
+                                <td><span class="badge badge-${getStatusBadge(order.status)}">${capitalize(order.status)}</span></div>
+                                <td>${formatDate(order.created_at)}</div>
+                                <td>
+                                    ${order.tracking_number ? 
+                                        `<div class="tracking-link" onclick="showTrackingInfo('${order.tracking_number}', '${order.tracking_link || ''}')">
+                                            📋 ${order.tracking_number}
+                                        </div>` : 
+                                        `<button class="btn btn-primary btn-sm" onclick="generateTracking(${order.id})">
+                                            🔗 Generate Link
+                                        </button>`
+                                    }
+                                 </div>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-icon sm btn-secondary" onclick="viewOrder(${order.id})" title="View Order">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                        </button>
+                                    </div>
+                                 </div>
+                             `
+                        ).join('');
+                        
+                        updatePagination(data.pagination);
+                    }
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><p>Failed to load orders</p></div></td></tr>';
+            }
+        }
+
+        function updatePagination(pagination) {
+            document.getElementById('paginationInfo').style.display = 'block';
+            const start = ((pagination.page - 1) * pagination.per_page) + 1;
+            const end = Math.min(pagination.page * pagination.per_page, pagination.total);
+            document.getElementById('paginationText').textContent = `Showing ${start} to ${end} of ${pagination.total} orders`;
+            
+            let html = '';
+            if (pagination.page > 1) {
+                html += `<button onclick="loadOrders(${pagination.page - 1})">&laquo; Prev</button>`;
+            }
+            for (let i = 1; i <= pagination.total_pages; i++) {
+                if (i === 1 || i === pagination.total_pages || (i >= pagination.page - 1 && i <= pagination.page + 1)) {
+                    html += `<button class="${i === pagination.page ? 'active' : ''}" onclick="loadOrders(${i})">${i}</button>`;
+                }
+            }
+            if (pagination.page < pagination.total_pages) {
+                html += `<button onclick="loadOrders(${pagination.page + 1})">Next &raquo;</button>`;
+            }
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => loadOrders(1), 300);
+        }
+
+        async function generateTracking(orderId) {
+            document.getElementById('trackingModal').classList.add('active');
+            document.body.classList.add('no-scroll');
+            document.getElementById('trackingModalContent').innerHTML = '<div class="loading"><div class="spinner"></div><p>Generating tracking link...</p></div>';
+            
+            try {
+                const response = await fetch(`api/orders.php?action=generate_tracking&id=${orderId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    generatedTrackingNumber = data.tracking_number;
+                    generatedTrackingLink = data.tracking_link;
+                    
+                    const trackingUrl = `${window.location.origin}/track.html?code=${data.tracking_number}`;
+                    
+                    document.getElementById('trackingModalContent').innerHTML = `
+                        <div style="text-align:center;padding:20px;">
+                            <div style="font-size:48px;margin-bottom:15px;">🔗</div>
+                            <h4 style="margin-bottom:15px;">Tracking Link Generated!</h4>
+                            <div style="background:#f0f0f0;padding:12px;border-radius:8px;margin-bottom:15px;">
+                                <strong>Tracking Number:</strong><br>
+                                <code style="font-size:16px;">${data.tracking_number}</code>
+                            </div>
+                            <div style="background:#e8f5e9;padding:12px;border-radius:8px;margin-bottom:15px;">
+                                <strong>Tracking Link:</strong><br>
+                                <a href="${trackingUrl}" target="_blank" style="color:#2e7d32;word-break:break-all;">${trackingUrl}</a>
+                            </div>
+                            <p style="font-size:12px;color:#666;">Share this link with your customer to track their order in real-time.</p>
+                        </div>
+                    `;
+                    
+                    showToast('success', 'Success', 'Tracking link generated successfully');
+                    loadOrders(currentPage);
+                } else {
+                    document.getElementById('trackingModalContent').innerHTML = `
+                        <div style="text-align:center;padding:20px;color:#dc3545;">
+                            <div style="font-size:48px;margin-bottom:15px;">❌</div>
+                            <h4>Failed to Generate Tracking Link</h4>
+                            <p>${data.error || 'Please try again later'}</p>
+                        </div>
+                    `;
+                    showToast('error', 'Error', data.error || 'Failed to generate tracking');
+                }
+            } catch (error) {
+                document.getElementById('trackingModalContent').innerHTML = `
+                    <div style="text-align:center;padding:20px;color:#dc3545;">
+                        <div style="font-size:48px;margin-bottom:15px;">❌</div>
+                        <h4>Network Error</h4>
+                        <p>Please check your connection and try again.</p>
+                    </div>
+                `;
+                showToast('error', 'Error', 'Network error while generating tracking');
+            }
+        }
+
+        function showTrackingInfo(trackingNumber, trackingLink) {
+            generatedTrackingNumber = trackingNumber;
+            generatedTrackingLink = trackingLink;
+            const trackingUrl = trackingLink || `${window.location.origin}/track.html?code=${trackingNumber}`;
+            
+            document.getElementById('trackingModal').classList.add('active');
+            document.body.classList.add('no-scroll');
+            document.getElementById('trackingModalContent').innerHTML = `
+                <div style="text-align:center;padding:20px;">
+                    <div style="font-size:48px;margin-bottom:15px;">📦</div>
+                    <h4 style="margin-bottom:15px;">Tracking Information</h4>
+                    <div style="background:#f0f0f0;padding:12px;border-radius:8px;margin-bottom:15px;">
+                        <strong>Tracking Number:</strong><br>
+                        <code style="font-size:16px;">${trackingNumber}</code>
+                    </div>
+                    <div style="background:#e8f5e9;padding:12px;border-radius:8px;margin-bottom:15px;">
+                        <strong>Tracking Link:</strong><br>
+                        <a href="${trackingUrl}" target="_blank" style="color:#2e7d32;word-break:break-all;">${trackingUrl}</a>
+                    </div>
+                    <p style="font-size:12px;color:#666;">Share this link with your customer to track their order.</p>
+                </div>
+            `;
+        }
+
+        function copyTrackingLink() {
+            if (generatedTrackingLink) {
+                navigator.clipboard.writeText(generatedTrackingLink);
+                showToast('success', 'Copied!', 'Tracking link copied to clipboard');
+            } else if (generatedTrackingNumber) {
+                const trackingUrl = `${window.location.origin}/track.html?code=${generatedTrackingNumber}`;
+                navigator.clipboard.writeText(trackingUrl);
+                showToast('success', 'Copied!', 'Tracking link copied to clipboard');
+            }
+        }
+
+        function closeTrackingModal() {
+            document.getElementById('trackingModal').classList.remove('active');
+            document.body.classList.remove('no-scroll');
+            generatedTrackingLink = '';
+            generatedTrackingNumber = '';
+        }
+
+        async function viewOrder(id) {
+            window.location.href = `orders.html?view=${id}`;
+        }
+
+        function formatCurrency(amount) {
+            if (typeof amount !== 'number') amount = parseFloat(amount) || 0;
+            return 'LKR ' + amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString();
+        }
+
+        function capitalize(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                'pending': 'warning',
+                'processing': 'info',
+                'shipped': 'primary',
+                'delivered': 'success',
+                'cancelled': 'danger'
+            };
+            return badges[status] || 'secondary';
+        }
+
+        function showToast(type, title, message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <strong>${title}</strong>
+                    <button onclick="this.parentElement.parentElement.remove()">✕</button>
+                </div>
+                <div class="toast-body">${message}</div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+    </script>
+</body>
+</html>

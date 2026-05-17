@@ -1,215 +1,342 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
-requireLogin();
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
-$conn = connectDB();
-$action = sanitize($_GET['action'] ?? 'list');
+require_once '../config/database.php';
+require_once '../config/functions.php';
 
-switch ($action) {
-    case 'list':
-        getCustomers($conn);
+requireAuth();
+
+$database = new Database();
+$db = $database->getConnection();
+
+$method = $_SERVER['REQUEST_METHOD'];
+$action = $_GET['action'] ?? '';
+
+switch ($method) {
+    case 'GET':
+        if ($action === 'list' || empty($action)) {
+            $search = isset($_GET['search']) ? sanitize($_GET['search']) : '';
+            $status = isset($_GET['status']) ? sanitize($_GET['status']) : '';
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+            
+            // Ensure page is at least 1
+            $page = max(1, $page);
+            
+            $pagination = paginate($page, $perPage);
+            
+            $where = "WHERE 1=1";
+            $params = [];
+            
+            if (!empty($search)) {
+                $where .= " AND (name LIKE ? OR email LIKE ? OR phone LIKE ? OR city LIKE ?)";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+            }
+            
+            if ($status === 'blocked') {
+                $where .= " AND is_blocked = 1";
+            } elseif ($status === 'active') {
+                $where .= " AND is_blocked = 0";
+            }
+            
+            try {
+                $countStmt = $db->prepare("SELECT COUNT(*) as total FROM customers $where");
+                $countStmt->execute($params);
+                $total = (int)$countStmt->fetch()['total'];
+                
+                $stmt = $db->prepare("
+                    SELECT id, name, email, phone, address, city, postal_code, 
+                           total_spent, is_blocked, created_at, updated_at 
+                    FROM customers 
+                    $where 
+                    ORDER BY created_at DESC 
+                    LIMIT ? OFFSET ?
+                ");
+                $stmt->execute(array_merge($params, [$pagination['limit'], $pagination['offset']]));
+                $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                response([
+                    'success' => true,
+                    'customers' => $customers,
+                    'pagination' => [
+                        'total' => $total,
+                        'page' => $pagination['page'],
+                        'per_page' => $pagination['per_page'],
+                        'total_pages' => ceil($total / $pagination['per_page'])
+                    ]
+                ]);
+            } catch (PDOException $e) {
+                response(['error' => 'Database error: ' . $e->getMessage()], 500);
+            }
+        } elseif ($action === 'get' && isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            
+            try {
+                $stmt = $db->prepare("
+                    SELECT id, name, email, phone, address, city, postal_code, 
+                           total_spent, is_blocked, created_at, updated_at 
+                    FROM customers WHERE id = ?
+                ");
+                $stmt->execute([$id]);
+                $customer = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($customer) {
+                    // Get recent orders for this customer
+                    $ordersStmt = $db->prepare("
+                        SELECT * FROM orders 
+                        WHERE customer_id = ? 
+                        ORDER BY created_at DESC 
+                        LIMIT 10
+                    ");
+                    $ordersStmt->execute([$id]);
+                    $orders = $ordersStmt->fetchAll(PDO::FETCH_ASSOC);
+                    
+                    response([
+                        'success' => true,
+                        'customer' => $customer,
+                        'orders' => $orders
+                    ]);
+                } else {
+                    response(['success' => false, 'error' => 'Customer not found'], 404);
+                }
+            } catch (PDOException $e) {
+                response(['error' => 'Database error: ' . $e->getMessage()], 500);
+            }
+        } elseif ($action === 'stats') {
+            try {
+                $stmt = $db->query("SELECT COUNT(*) as total FROM customers");
+                $total = (int)$stmt->fetch()['total'];
+                
+                $stmt = $db->query("SELECT COUNT(*) as blocked FROM customers WHERE is_blocked = 1");
+                $blocked = (int)$stmt->fetch()['blocked'];
+                
+                $stmt = $db->query("SELECT COALESCE(AVG(total_spent), 0) as avg_spent FROM customers");
+                $avgSpent = (float)$stmt->fetch()['avg_spent'];
+                
+                $stmt = $db->query("SELECT COALESCE(SUM(total_spent), 0) as total_revenue FROM customers");
+                $totalRevenue = (float)$stmt->fetch()['total_revenue'];
+                
+                response([
+                    'success' => true,
+                    'stats' => [
+                        'total' => $total,
+                        'blocked' => $blocked,
+                        'active' => $total - $blocked,
+                        'avg_spent' => round($avgSpent, 2),
+                        'total_revenue' => round($totalRevenue, 2)
+                    ]
+                ]);
+            } catch (PDOException $e) {
+                response(['error' => 'Database error: ' . $e->getMessage()], 500);
+            }
+        } else {
+            response(['error' => 'Invalid action'], 400);
+        }
         break;
-    case 'get':
-        getCustomer($conn);
+        
+    case 'POST':
+        if ($action === 'add') {
+            $jsonInput = file_get_contents("php://input");
+            $data = json_decode($jsonInput, true);
+            
+            if (!$data) {
+                response(['error' => 'Invalid JSON data'], 400);
+            }
+            
+            // Validate required fields
+            if (empty($data['name']) || empty($data['email'])) {
+                response(['error' => 'Name and email are required'], 400);
+            }
+            
+            $name = sanitize($data['name']);
+            $email = sanitize($data['email']);
+            $phone = sanitize($data['phone'] ?? '');
+            $address = sanitize($data['address'] ?? '');
+            $city = sanitize($data['city'] ?? '');
+            $postal_code = sanitize($data['postal_code'] ?? '');
+            // Generate a random password or set a default one
+            $password = password_hash('customer123', PASSWORD_DEFAULT);
+            
+            // Validate email format
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                response(['error' => 'Invalid email format'], 400);
+            }
+            
+            try {
+                // Check if email already exists
+                $check = $db->prepare("SELECT id FROM customers WHERE email = ?");
+                $check->execute([$email]);
+                
+                if ($check->fetch()) {
+                    response(['success' => false, 'error' => 'Email already exists'], 400);
+                }
+                
+                $stmt = $db->prepare("
+                    INSERT INTO customers 
+                    (name, email, phone, address, city, postal_code, password, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+                ");
+                
+                if ($stmt->execute([$name, $email, $phone, $address, $city, $postal_code, $password])) {
+                    $newId = $db->lastInsertId();
+                    response([
+                        'success' => true, 
+                        'message' => 'Customer added successfully',
+                        'id' => $newId
+                    ]);
+                } else {
+                    response(['success' => false, 'error' => 'Failed to add customer'], 500);
+                }
+            } catch (PDOException $e) {
+                response(['error' => 'Database error: ' . $e->getMessage()], 500);
+            }
+        } else {
+            response(['error' => 'Invalid action'], 400);
+        }
         break;
-    case 'update':
-        updateCustomer($conn);
+
+    case 'PUT':
+        if ($action === 'update' && isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            $jsonInput = file_get_contents('php://input');
+            $putData = json_decode($jsonInput, true);
+            
+            if (!$putData) {
+                response(['error' => 'Invalid JSON data'], 400);
+            }
+            
+            try {
+                // Get existing customer data
+                $stmt = $db->prepare("
+                    SELECT id, name, email, phone, address, city, postal_code, 
+                           total_spent, is_blocked, created_at, updated_at 
+                    FROM customers WHERE id = ?
+                ");
+                $stmt->execute([$id]);
+                $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if (!$existing) {
+                    response(['success' => false, 'error' => 'Customer not found'], 404);
+                }
+                
+                $name = sanitize($putData['name'] ?? $existing['name']);
+                $email = sanitize($putData['email'] ?? $existing['email']);
+                $phone = sanitize($putData['phone'] ?? $existing['phone']);
+                $address = sanitize($putData['address'] ?? $existing['address']);
+                $city = sanitize($putData['city'] ?? $existing['city']);
+                $postal_code = sanitize($putData['postal_code'] ?? $existing['postal_code']);
+                
+                // Validate email format
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    response(['error' => 'Invalid email format'], 400);
+                }
+                
+                // Check if email already exists for another customer
+                if ($email !== $existing['email']) {
+                    $checkStmt = $db->prepare("SELECT id FROM customers WHERE email = ? AND id != ?");
+                    $checkStmt->execute([$email, $id]);
+                    if ($checkStmt->fetch()) {
+                        response(['success' => false, 'error' => 'Email already exists for another customer'], 400);
+                    }
+                }
+                
+                $updateStmt = $db->prepare("
+                    UPDATE customers 
+                    SET name = ?, email = ?, phone = ?, address = ?, city = ?, postal_code = ?, updated_at = NOW()
+                    WHERE id = ?
+                ");
+                
+                if ($updateStmt->execute([$name, $email, $phone, $address, $city, $postal_code, $id])) {
+                    response([
+                        'success' => true, 
+                        'message' => 'Customer updated successfully'
+                    ]);
+                } else {
+                    response(['success' => false, 'error' => 'Failed to update customer'], 500);
+                }
+            } catch (PDOException $e) {
+                response(['error' => 'Database error: ' . $e->getMessage()], 500);
+            }
+        } elseif ($action === 'block' && isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            $blocked = isset($_GET['blocked']) ? (int)$_GET['blocked'] : 1;
+            
+            try {
+                // Check if customer exists
+                $checkStmt = $db->prepare("SELECT id FROM customers WHERE id = ?");
+                $checkStmt->execute([$id]);
+                
+                if (!$checkStmt->fetch()) {
+                    response(['success' => false, 'error' => 'Customer not found'], 404);
+                }
+                
+                $stmt = $db->prepare("UPDATE customers SET is_blocked = ?, updated_at = NOW() WHERE id = ?");
+                if ($stmt->execute([$blocked, $id])) {
+                    $message = $blocked ? 'Customer blocked successfully' : 'Customer unblocked successfully';
+                    response(['success' => true, 'message' => $message]);
+                } else {
+                    response(['success' => false, 'error' => 'Failed to update customer status'], 500);
+                }
+            } catch (PDOException $e) {
+                response(['error' => 'Database error: ' . $e->getMessage()], 500);
+            }
+        } else {
+            response(['error' => 'Invalid action'], 400);
+        }
         break;
-    case 'toggle_status':
-        toggleStatus($conn);
+        
+    case 'DELETE':
+        if ($action === 'delete' && isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            
+            try {
+                // Check if customer exists
+                $checkStmt = $db->prepare("SELECT id FROM customers WHERE id = ?");
+                $checkStmt->execute([$id]);
+                
+                if (!$checkStmt->fetch()) {
+                    response(['success' => false, 'error' => 'Customer not found'], 404);
+                }
+                
+                // Check if customer has orders
+                $orderCheck = $db->prepare("SELECT COUNT(*) as count FROM orders WHERE customer_id = ?");
+                $orderCheck->execute([$id]);
+                $orderCount = (int)$orderCheck->fetch()['count'];
+                
+                if ($orderCount > 0) {
+                    response([
+                        'success' => false, 
+                        'error' => 'Cannot delete customer with existing orders. Consider blocking instead.'
+                    ], 400);
+                }
+                
+                $stmt = $db->prepare("DELETE FROM customers WHERE id = ?");
+                if ($stmt->execute([$id])) {
+                    response(['success' => true, 'message' => 'Customer deleted successfully']);
+                } else {
+                    response(['success' => false, 'error' => 'Failed to delete customer'], 500);
+                }
+            } catch (PDOException $e) {
+                response(['error' => 'Database error: ' . $e->getMessage()], 500);
+            }
+        } else {
+            response(['error' => 'Invalid action'], 400);
+        }
         break;
-    case 'get_orders':
-        getCustomerOrders($conn);
-        break;
+        
     default:
-        jsonResponse(false, 'Invalid action');
+        response(['error' => 'Invalid request method'], 405);
+        break;
 }
-
-function getCustomers($conn) {
-    $page = (int)($_GET['page'] ?? 1);
-    $limit = (int)($_GET['limit'] ?? 10);
-    $search = sanitize($_GET['search'] ?? '');
-    $status = sanitize($_GET['status'] ?? '');
-    $offset = ($page - 1) * $limit;
-    
-    $where = ['1=1'];
-    $params = [];
-    $types = '';
-    
-    if ($search) {
-        $where[] = "(first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR phone LIKE ?)";
-        $searchTerm = "%$search%";
-        $params[] = $searchTerm;
-        $params[] = $searchTerm;
-        $params[] = $searchTerm;
-        $params[] = $searchTerm;
-        $types .= 'ssss';
-    }
-    
-    if ($status) {
-        $where[] = "status = ?";
-        $params[] = $status;
-        $types .= 's';
-    }
-    
-    $whereClause = implode(' AND ', $where);
-    
-    $countSql = "SELECT COUNT(*) as total FROM customers WHERE $whereClause";
-    $stmt = $conn->prepare($countSql);
-    if ($params) {
-        $stmt->bind_param($types, ...$params);
-    }
-    $stmt->execute();
-    $total = $stmt->get_result()->fetch_assoc()['total'];
-    $stmt->close();
-    
-    $sql = "SELECT * FROM customers WHERE $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?";
-    $params[] = $limit;
-    $params[] = $offset;
-    $types .= 'ii';
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-    $customers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    jsonResponse(true, 'Customers loaded', [
-        'customers' => $customers,
-        'pagination' => [
-            'total' => $total,
-            'page' => $page,
-            'limit' => $limit,
-            'pages' => ceil($total / $limit)
-        ]
-    ]);
-}
-
-function getCustomer($conn) {
-    $id = (int)($_GET['id'] ?? 0);
-    
-    if (!$id) {
-        jsonResponse(false, 'Customer ID required');
-    }
-    
-    $stmt = $conn->prepare("SELECT * FROM customers WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $customer = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    
-    if (!$customer) {
-        jsonResponse(false, 'Customer not found');
-    }
-    
-    $ordersStmt = $conn->prepare("
-        SELECT o.*, COUNT(oi.id) as items_count 
-        FROM orders o 
-        LEFT JOIN order_items oi ON o.id = oi.order_id 
-        WHERE o.customer_id = ? 
-        GROUP BY o.id 
-        ORDER BY o.created_at DESC 
-        LIMIT 10
-    ");
-    $ordersStmt->bind_param("i", $id);
-    $ordersStmt->execute();
-    $orders = $ordersStmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $ordersStmt->close();
-    
-    jsonResponse(true, 'Customer loaded', [
-        'customer' => $customer,
-        'orders' => $orders
-    ]);
-}
-
-function updateCustomer($conn) {
-    $id = (int)($_POST['id'] ?? 0);
-    
-    if (!$id) {
-        jsonResponse(false, 'Customer ID required');
-    }
-    
-    $first_name = sanitize($_POST['first_name'] ?? '');
-    $last_name = sanitize($_POST['last_name'] ?? '');
-    $email = sanitize($_POST['email'] ?? '');
-    $phone = sanitize($_POST['phone'] ?? '');
-    $address = sanitize($_POST['address'] ?? '');
-    $city = sanitize($_POST['city'] ?? '');
-    $state = sanitize($_POST['state'] ?? '');
-    $zip_code = sanitize($_POST['zip_code'] ?? '');
-    
-    if (empty($first_name) || empty($last_name) || empty($email)) {
-        jsonResponse(false, 'First name, last name, and email are required');
-    }
-    
-    $stmt = $conn->prepare("SELECT id FROM customers WHERE email = ? AND id != ?");
-    $stmt->bind_param("si", $email, $id);
-    $stmt->execute();
-    if ($stmt->get_result()->num_rows > 0) {
-        jsonResponse(false, 'Email already exists');
-    }
-    $stmt->close();
-    
-    $sql = "UPDATE customers SET first_name = ?, last_name = ?, email = ?, phone = ?, address = ?, city = ?, state = ?, zip_code = ? WHERE id = ?";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssi", $first_name, $last_name, $email, $phone, $address, $city, $state, $zip_code, $id);
-    
-    if ($stmt->execute()) {
-        logActivity($conn, $_SESSION['admin_id'], 'update', 'customers', $id, "Updated customer: $first_name $last_name");
-        jsonResponse(true, 'Customer updated successfully');
-    } else {
-        jsonResponse(false, 'Failed to update customer');
-    }
-    
-    $stmt->close();
-}
-
-function toggleStatus($conn) {
-    $id = (int)($_POST['id'] ?? 0);
-    $status = sanitize($_POST['status'] ?? '');
-    
-    if (!$id) {
-        jsonResponse(false, 'Customer ID required');
-    }
-    
-    if (!in_array($status, ['active', 'inactive', 'blocked'])) {
-        jsonResponse(false, 'Invalid status');
-    }
-    
-    $stmt = $conn->prepare("UPDATE customers SET status = ? WHERE id = ?");
-    $stmt->bind_param("si", $status, $id);
-    
-    if ($stmt->execute()) {
-        logActivity($conn, $_SESSION['admin_id'], 'update', 'customers', $id, "Changed status to $status");
-        jsonResponse(true, 'Customer status updated');
-    } else {
-        jsonResponse(false, 'Failed to update status');
-    }
-    
-    $stmt->close();
-}
-
-function getCustomerOrders($conn) {
-    $customer_id = (int)($_GET['customer_id'] ?? 0);
-    
-    if (!$customer_id) {
-        jsonResponse(false, 'Customer ID required');
-    }
-    
-    $stmt = $conn->prepare("
-        SELECT o.*, COUNT(oi.id) as items_count 
-        FROM orders o 
-        LEFT JOIN order_items oi ON o.id = oi.order_id 
-        WHERE o.customer_id = ? 
-        GROUP BY o.id 
-        ORDER BY o.created_at DESC
-    ");
-    $stmt->bind_param("i", $customer_id);
-    $stmt->execute();
-    $orders = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    jsonResponse(true, 'Orders loaded', $orders);
-}
+?>

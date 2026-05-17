@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Microgreens Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 20h10"></path>
+                        <path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+                        <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path>
+                        <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-title">
+                    <h2>Microgreens</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                        Dashboard
+                    </a>
+                    <a href="ai.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z"></path>
+                            <path d="M12 6v4l2 2"></path>
+                            <path d="M12 16h.01"></path>
+                        </svg>
+                        AI Analytics
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="products.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                        Products
+                    </a>
+                    <a href="customers.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Customers
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        Orders
+                    </a>
+                    <a href="inventory.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        Inventory
+                    </a>
+                    <a href="delivery.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        Delivery
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="reports.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Reports
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="userName">Admin User</div>
+                        <div class="sidebar-user-role" id="userRole">Administrator</div>
+                    </div>
+                    <button class="btn-icon sm" onclick="logout()" title="Logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        
+        <div class="mobile-menu-overlay" id="mobileOverlay"></div>
+        
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <h1 style="font-size: 20px; font-weight: 600;">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <button class="header-icon-btn" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <span class="badge badge-danger" id="notifBadge" style="display: none;">3</span>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Welcome back!</h1>
+                        <p class="page-subtitle">Here's what's happening with your business today.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="location.reload()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" id="statsGrid">
+                    <div class="card stat-card fade-in stagger-1">
+                        <div class="stat-icon green">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Today's Sales</h4>
+                            <h2 id="todaySales">$0.00</h2>
+                            <p id="todayOrders">0 orders</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card stat-card fade-in stagger-2">
+                        <div class="stat-icon yellow">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Pending Orders</h4>
+                            <h2 id="pendingOrders">0</h2>
+                            <p>Awaiting processing</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card stat-card fade-in stagger-3">
+                        <div class="stat-icon blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Total Customers</h4>
+                            <h2 id="totalCustomers">0</h2>
+                            <p>Active accounts</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card stat-card fade-in stagger-4">
+                        <div class="stat-icon red">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Low Stock Items</h4>
+                            <h2 id="lowStock">0</h2>
+                            <p>Need restocking</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="chart-card fade-in">
+                        <div class="chart-header">
+                            <h3>Sales Overview</h3>
+                            <select class="form-select" style="width: auto;" id="salesPeriod" onchange="loadSalesChart()">
+                                <option value="7">Last 7 Days</option>
+                                <option value="14">Last 14 Days</option>
+                                <option value="30">Last 30 Days</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card fade-in">
+                        <div class="chart-header">
+                            <h3>Top Products</h3>
+                        </div>
+                        <div class="products-list" id="topProducts">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>Recent Orders</h3>
+                        <a href="orders.html" class="btn btn-sm btn-secondary">View All</a>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrders">
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="loading">
+                                            <div class="spinner"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let salesChart = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadDashboard();
+            setupMobileMenu();
+        });
+
+        function setupMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const menuToggle = document.getElementById('menuToggle');
+
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+        }
+
+        async function loadDashboard() {
+            await Promise.all([
+                loadStats(),
+                loadSalesChart(),
+                loadTopProducts(),
+                loadRecentOrders(),
+                loadBadges()
+            ]);
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('api/dashboard.php?action=stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const stats = data.stats;
+                    document.getElementById('todaySales').textContent = formatCurrency(stats.today_sales);
+                    document.getElementById('todayOrders').textContent = stats.today_orders + ' orders';
+                    document.getElementById('pendingOrders').textContent = stats.pending_orders;
+                    document.getElementById('totalCustomers').textContent = stats.total_customers;
+                    document.getElementById('lowStock').textContent = stats.low_stock;
+                }
+            } catch (error) {
+                showToast('error', 'Error', 'Failed to load statistics');
+            }
+        }
+
+        async function loadSalesChart() {
+            const days = document.getElementById('salesPeriod').value;
+            
+            try {
+                const response = await fetch(`api/dashboard.php?action=sales_chart&days=${days}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const ctx = document.getElementById('salesChart').getContext('2d');
+                    
+                    if (salesChart) {
+                        salesChart.destroy();
+                    }
+                    
+                    salesChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Sales',
+                                data: data.data,
+                                borderColor: '#22c55e',
+                                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#22c55e'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '$' + value;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                showToast('error', 'Error', 'Failed to load chart');
+            }
+        }
+
+        async function loadTopProducts() {
+            const container = document.getElementById('topProducts');
+            
+            try {
+                const response = await fetch('api/dashboard.php?action=top_products&limit=5');
+                const data = await response.json();
+                
+                if (data.success && data.products.length > 0) {
+                    const maxSold = Math.max(...data.products.map(p => parseInt(p.total_sold)));
+                    
+                    container.innerHTML = data.products.map(product => `
+                        <div class="product-item">
+                            <div class="product-image" style="width:48px;height:48px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                ${product.image ? `<img src="${product.image}" alt="${product.name}">` : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>'}
+                            </div>
+                            <div class="info" style="flex:1;">
+                                <div class="name">${product.name}</div>
+                                <div class="meta">${product.total_sold} sold</div>
+                                <div class="product-bar" style="margin-top:8px;">
+                                    <div class="product-bar-fill" style="width:${(product.total_sold / maxSold) * 100}%;"></div>
+                                </div>
+                            </div>
+                            <div class="value">${formatCurrency(product.total_revenue)}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="empty-state"><p>No products found</p></div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><p>Failed to load products</p></div>';
+            }
+        }
+
+        async function loadRecentOrders() {
+            const tbody = document.getElementById('recentOrders');
+            
+            try {
+                const response = await fetch('api/dashboard.php?action=recent_orders');
+                const data = await response.json();
+                
+                if (data.success && data.orders.length > 0) {
+                    tbody.innerHTML = data.orders.map(order => `
+                        <tr>
+                            <td><strong>${order.order_number}</strong></td>
+                            <td>${order.customer_name || 'Guest'}</td>
+                            <td><span class="badge badge-${getStatusBadge(order.status)}">${capitalize(order.status)}</span></td>
+                            <td class="price">${formatCurrency(order.total)}</td>
+                            <td>${formatDate(order.created_at)}</td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-sm btn-secondary" onclick="viewOrder(${order.id})">View</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>No orders found</p></div></td></tr>';
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>Failed to load orders</p></div></td></tr>';
+            }
+        }
+
+        async function loadBadges() {
+            try {
+                const response = await fetch('api/dashboard.php?action=stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const pendingBadge = document.getElementById('pendingBadge');
+                    const lowStockBadge = document.getElementById('lowStockBadge');
+                    const notifBadge = document.getElementById('notifBadge');
+                    
+                    if (data.stats.pending_orders > 0) {
+                        pendingBadge.textContent = data.stats.pending_orders;
+                        pendingBadge.style.display = 'flex';
+                    }
+                    
+                    if (data.stats.low_stock > 0) {
+                        lowStockBadge.textContent = data.stats.low_stock;
+                        lowStockBadge.style.display = 'flex';
+                    }
+                    
+                    const totalNotifs = data.stats.pending_orders + data.stats.low_stock;
+                    if (totalNotifs > 0) {
+                        notifBadge.textContent = totalNotifs;
+                        notifBadge.style.display = 'flex';
+                    }
+                }
+            } catch (error) {
+                console.log('Failed to load badges');
+            }
+        }
+
+        function viewOrder(id) {
+            window.location.href = `orders.html?view=${id}`;
+        }
+    </script>
+</body>
+</html>

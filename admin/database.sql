@@ -1,244 +1,259 @@
 -- Microgreens Admin Panel Database Schema
--- Run this SQL to set up the database
+-- Run this SQL to set up your database
 
 CREATE DATABASE IF NOT EXISTS microgreens_admin;
 USE microgreens_admin;
 
--- Admin Users Table
+-- Admins table
 CREATE TABLE IF NOT EXISTS admins (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    role ENUM('super_admin', 'admin', 'manager') DEFAULT 'admin',
-    status ENUM('active', 'inactive', 'blocked') DEFAULT 'active',
-    last_login DATETIME,
+    role ENUM('admin', 'manager', 'staff') DEFAULT 'staff',
+    avatar VARCHAR(255) DEFAULT NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    last_login DATETIME DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Customers Table
-CREATE TABLE IF NOT EXISTS customers (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    address TEXT,
-    city VARCHAR(100),
-    state VARCHAR(100),
-    zip_code VARCHAR(20),
-    status ENUM('active', 'inactive', 'blocked') DEFAULT 'active',
-    total_orders INT DEFAULT 0,
-    total_spent DECIMAL(10,2) DEFAULT 0.00,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+-- Insert default admin (password: admin123)
+INSERT INTO admins (name, email, password, role) VALUES 
+('Admin User', 'admin@microgreens.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
 
--- Categories Table
+-- Categories table
 CREATE TABLE IF NOT EXISTS categories (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     slug VARCHAR(100) UNIQUE NOT NULL,
     description TEXT,
-    image VARCHAR(255),
-    status ENUM('active', 'inactive') DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    image VARCHAR(255) DEFAULT NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Products Table
+-- Insert default categories
+INSERT INTO categories (name, slug, description) VALUES 
+('Microgreens', 'microgreens', 'Young vegetable greens harvested after 7-21 days'),
+('Sprouts', 'sprouts', 'Germinated seeds ready to eat'),
+('Edible Flowers', 'edible-flowers', 'Beautiful flowers that are safe to eat'),
+('Mixes', 'mixes', 'Pre-mixed combinations of microgreens');
+
+-- Products table
 CREATE TABLE IF NOT EXISTS products (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT,
     name VARCHAR(200) NOT NULL,
-    slug VARCHAR(200) NOT NULL,
+    slug VARCHAR(200) UNIQUE NOT NULL,
     description TEXT,
     price DECIMAL(10,2) NOT NULL,
-    compare_price DECIMAL(10,2),
-    cost_price DECIMAL(10,2),
+    unit VARCHAR(50) DEFAULT 'tray',
+    image VARCHAR(255) DEFAULT NULL,
     stock_quantity INT DEFAULT 0,
     low_stock_threshold INT DEFAULT 10,
-    unit VARCHAR(50) DEFAULT 'tray',
-    image VARCHAR(255),
-    gallery JSON,
     is_featured TINYINT(1) DEFAULT 0,
     is_active TINYINT(1) DEFAULT 1,
-    sku VARCHAR(50) UNIQUE,
-    weight DECIMAL(8,2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
 
--- Orders Table
+-- Insert sample products
+INSERT INTO products (category_id, name, slug, description, price, unit, stock_quantity, is_featured) VALUES 
+(1, 'Sunflower Microgreens', 'sunflower-microgreens', 'Nutty and crunchy microgreens packed with vitamins A, B, C, and E', 12.99, 'tray', 45, 1),
+(1, 'Pea Shoots', 'pea-shoots', 'Sweet and tender shoots perfect for salads and sandwiches', 10.99, 'tray', 38, 1),
+(1, 'Radish Microgreens', 'radish-microgreens', 'Spicy and peppery microgreens with a vibrant flavor', 11.99, 'tray', 52, 0),
+(1, 'Broccoli Microgreens', 'broccoli-microgreens', 'Mild and nutritious greens rich in sulforaphane', 13.99, 'tray', 28, 1),
+(1, 'Alfalfa Sprouts', 'alfalfa-sprouts', 'Light and refreshing sprouts great for snacking', 8.99, 'pack', 65, 0),
+(2, 'Wheatgrass', 'wheatgrass', 'Energizing green juice base, rich in chlorophyll', 14.99, 'tray', 22, 1),
+(2, 'Mung Bean Sprouts', 'mung-bean-sprouts', 'Crisp and crunchy bean sprouts for stir-fries', 7.99, 'pack', 58, 0),
+(3, 'Microgreen Mix', 'microgreen-mix', 'Assortment of our best microgreens for variety', 15.99, 'tray', 35, 1),
+(4, 'Spicy Mix', 'spicy-mix', 'Blend of radish, mustard, and arugula microgreens', 13.99, 'tray', 18, 0),
+(4, 'Mild Mix', 'mild-mix', 'Gentle blend of sunflower, pea, and broccoli', 13.99, 'tray', 8, 0);
+
+-- Customers table
+CREATE TABLE IF NOT EXISTS customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    password VARCHAR(255) NOT NULL,
+    address TEXT,
+    city VARCHAR(100),
+    postal_code VARCHAR(20),
+    is_blocked TINYINT(1) DEFAULT 0,
+    total_orders INT DEFAULT 0,
+    total_spent DECIMAL(10,2) DEFAULT 0.00,
+    last_order_date DATETIME DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Insert sample customers
+INSERT INTO customers (name, email, phone, password, address, city, postal_code, total_orders, total_spent) VALUES 
+('John Smith', 'john@example.com', '+1 555-0101', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '123 Oak Street', 'Portland', '97201', 15, 245.85),
+('Sarah Johnson', 'sarah@example.com', '+1 555-0102', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '456 Maple Ave', 'Seattle', '98101', 8, 132.50),
+('Mike Davis', 'mike@example.com', '+1 555-0103', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '789 Pine Road', 'San Francisco', '94102', 22, 389.75),
+('Emily Brown', 'emily@example.com', '+1 555-0104', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '321 Cedar Lane', 'Los Angeles', '90001', 5, 78.95),
+('David Wilson', 'david@example.com', '+1 555-0105', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '654 Birch Blvd', 'Denver', '80201', 12, 198.50);
+
+-- Orders table
 CREATE TABLE IF NOT EXISTS orders (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     order_number VARCHAR(50) UNIQUE NOT NULL,
-    customer_id INT NOT NULL,
+    customer_id INT,
     subtotal DECIMAL(10,2) NOT NULL,
     tax DECIMAL(10,2) DEFAULT 0.00,
-    shipping_cost DECIMAL(10,2) DEFAULT 0.00,
-    discount DECIMAL(10,2) DEFAULT 0.00,
+    delivery_fee DECIMAL(10,2) DEFAULT 0.00,
     total DECIMAL(10,2) NOT NULL,
-    status ENUM('pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded') DEFAULT 'pending',
+    status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
     payment_status ENUM('pending', 'paid', 'failed', 'refunded') DEFAULT 'pending',
     payment_method VARCHAR(50),
-    shipping_name VARCHAR(100),
-    shipping_phone VARCHAR(20),
-    shipping_address TEXT,
-    shipping_city VARCHAR(100),
-    shipping_zip VARCHAR(20),
     tracking_number VARCHAR(100),
     tracking_link VARCHAR(255),
     notes TEXT,
-    admin_notes TEXT,
     delivery_date DATE,
-    delivered_at DATETIME,
+    delivery_address TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL
 );
 
--- Order Items Table
+-- Insert sample orders
+INSERT INTO orders (order_number, customer_id, subtotal, tax, delivery_fee, total, status, payment_status, payment_method, delivery_date, delivery_address) VALUES 
+('ORD-2024-001', 1, 35.97, 2.88, 5.00, 43.85, 'delivered', 'paid', 'card', '2024-01-15', '123 Oak Street, Portland, OR 97201'),
+('ORD-2024-002', 2, 28.98, 2.32, 5.00, 36.30, 'delivered', 'paid', 'card', '2024-01-16', '456 Maple Ave, Seattle, WA 98101'),
+('ORD-2024-003', 3, 54.95, 4.40, 5.00, 64.35, 'shipped', 'paid', 'card', '2024-01-18', '789 Pine Road, San Francisco, CA 94102'),
+('ORD-2024-004', 4, 19.98, 1.60, 5.00, 26.58, 'processing', 'paid', 'cash', '2024-01-19', '321 Cedar Lane, Los Angeles, CA 90001'),
+('ORD-2024-005', 1, 41.97, 3.36, 5.00, 50.33, 'pending', 'pending', 'card', '2024-01-20', '123 Oak Street, Portland, OR 97201'),
+('ORD-2024-006', 5, 27.98, 2.24, 5.00, 35.22, 'pending', 'paid', 'card', '2024-01-21', '654 Birch Blvd, Denver, CO 80201'),
+('ORD-2024-007', 2, 15.99, 1.28, 0.00, 17.27, 'delivered', 'paid', 'card', '2024-01-12', '456 Maple Ave, Seattle, WA 98101'),
+('ORD-2024-008', 3, 68.95, 5.52, 5.00, 79.47, 'processing', 'paid', 'card', '2024-01-22', '789 Pine Road, San Francisco, CA 94102');
+
+-- Order Items table
 CREATE TABLE IF NOT EXISTS order_items (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT,
     product_name VARCHAR(200) NOT NULL,
-    product_price DECIMAL(10,2) NOT NULL,
     quantity INT NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
     subtotal DECIMAL(10,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 );
 
--- Inventory Logs Table
-CREATE TABLE IF NOT EXISTS inventory_logs (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+-- Insert sample order items
+INSERT INTO order_items (order_id, product_id, product_name, quantity, unit_price, subtotal) VALUES 
+(1, 1, 'Sunflower Microgreens', 2, 12.99, 25.98),
+(1, 2, 'Pea Shoots', 1, 10.99, 10.99),
+(2, 3, 'Radish Microgreens', 2, 11.99, 23.98),
+(2, 5, 'Alfalfa Sprouts', 1, 5.00, 5.00),
+(3, 1, 'Sunflower Microgreens', 3, 12.99, 38.97),
+(3, 4, 'Broccoli Microgreens', 1, 13.99, 13.99),
+(3, 6, 'Wheatgrass', 1, 14.99, 14.99),
+(4, 2, 'Pea Shoots', 2, 10.99, 21.98),
+(5, 4, 'Broccoli Microgreens', 2, 13.99, 27.98),
+(5, 8, 'Microgreen Mix', 1, 15.99, 15.99),
+(6, 3, 'Radish Microgreens', 2, 11.99, 23.98),
+(7, 8, 'Microgreen Mix', 1, 15.99, 15.99),
+(8, 1, 'Sunflower Microgreens', 3, 12.99, 38.97),
+(8, 2, 'Pea Shoots', 2, 10.99, 21.98),
+(8, 4, 'Broccoli Microgreens', 1, 13.99, 13.99),
+(8, 6, 'Wheatgrass', 2, 14.99, 29.98);
+
+-- Inventory table (for detailed tracking)
+CREATE TABLE IF NOT EXISTS inventory (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
     quantity_change INT NOT NULL,
-    reason VARCHAR(255),
-    order_id INT,
+    change_type ENUM('sale', 'restock', 'adjustment', 'damage', 'return') NOT NULL,
+    notes TEXT,
     admin_id INT,
-    previous_stock INT,
-    new_stock INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
-    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL,
     FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE SET NULL
 );
 
--- Delivery Schedule Table
-CREATE TABLE IF NOT EXISTS delivery_schedule (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+-- Insert sample inventory logs
+INSERT INTO inventory (product_id, quantity_change, change_type, notes, admin_id) VALUES 
+(1, -2, 'sale', 'Order ORD-2024-001', 1),
+(2, -1, 'sale', 'Order ORD-2024-001', 1),
+(3, -2, 'sale', 'Order ORD-2024-002', 1),
+(5, -1, 'sale', 'Order ORD-2024-002', 1),
+(1, -3, 'sale', 'Order ORD-2024-003', 1),
+(4, -1, 'sale', 'Order ORD-2024-003', 1),
+(6, -1, 'sale', 'Order ORD-2024-003', 1),
+(2, -2, 'sale', 'Order ORD-2024-004', 1),
+(4, -2, 'sale', 'Order ORD-2024-005', 1),
+(8, -1, 'sale', 'Order ORD-2024-005', 1),
+(3, -2, 'sale', 'Order ORD-2024-006', 1),
+(8, -1, 'sale', 'Order ORD-2024-007', 1),
+(1, -3, 'sale', 'Order ORD-2024-008', 1),
+(2, -2, 'sale', 'Order ORD-2024-008', 1),
+(4, -1, 'sale', 'Order ORD-2024-008', 1),
+(6, -2, 'sale', 'Order ORD-2024-008', 1),
+(1, 20, 'restock', 'Weekly restock', 1),
+(2, 15, 'restock', 'Weekly restock', 1),
+(3, 25, 'restock', 'Weekly restock', 1);
+
+-- Deliveries table
+CREATE TABLE IF NOT EXISTS deliveries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     delivery_date DATE NOT NULL,
     time_slot VARCHAR(50),
+    status ENUM('scheduled', 'in_transit', 'delivered', 'failed', 'cancelled') DEFAULT 'scheduled',
     driver_name VARCHAR(100),
     driver_phone VARCHAR(20),
-    vehicle_number VARCHAR(50),
-    status ENUM('scheduled', 'out_for_delivery', 'delivered', 'failed') DEFAULT 'scheduled',
-    notes TEXT,
+    delivery_notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
 
--- Sales Reports Table
-CREATE TABLE IF NOT EXISTS sales_reports (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    report_type ENUM('daily', 'weekly', 'monthly', 'yearly', 'custom') NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    total_sales DECIMAL(12,2) DEFAULT 0.00,
-    total_orders INT DEFAULT 0,
-    total_products_sold INT DEFAULT 0,
-    average_order_value DECIMAL(10,2) DEFAULT 0.00,
-    top_products JSON,
-    report_data JSON,
-    generated_by INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (generated_by) REFERENCES admins(id) ON DELETE SET NULL
-);
+-- Insert sample deliveries
+INSERT INTO deliveries (order_id, delivery_date, time_slot, status, driver_name) VALUES 
+(1, '2024-01-15', 'Morning (9AM-12PM)', 'delivered', 'Alex Turner'),
+(2, '2024-01-16', 'Afternoon (1PM-5PM)', 'delivered', 'Jordan Lee'),
+(3, '2024-01-18', 'Morning (9AM-12PM)', 'in_transit', 'Alex Turner'),
+(4, '2024-01-19', 'Afternoon (1PM-5PM)', 'scheduled', 'Jordan Lee'),
+(5, '2024-01-20', 'Morning (9AM-12PM)', 'scheduled', 'Alex Turner'),
+(6, '2024-01-21', 'Afternoon (1PM-5PM)', 'scheduled', 'Jordan Lee'),
+(7, '2024-01-12', 'Morning (9AM-12PM)', 'delivered', 'Alex Turner'),
+(8, '2024-01-22', 'Morning (9AM-12PM)', 'scheduled', 'Alex Turner');
 
--- Activity Logs Table
+-- Activity logs table
 CREATE TABLE IF NOT EXISTS activity_logs (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     admin_id INT,
     action VARCHAR(100) NOT NULL,
-    module VARCHAR(50) NOT NULL,
-    record_id INT,
     details TEXT,
     ip_address VARCHAR(45),
-    user_agent TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE SET NULL
 );
 
--- Insert default admin user (password: admin123)
-INSERT INTO admins (username, email, password, full_name, role) VALUES 
-('admin', 'admin@microgreens.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'System Administrator', 'super_admin');
+-- Sales table (for analytics)
+CREATE TABLE IF NOT EXISTS sales (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    sale_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
 
--- Insert sample categories
-INSERT INTO categories (name, slug, description) VALUES 
-('Leafy Greens', 'leafy-greens', 'Fresh leafy microgreens'),
-('Herbs', 'herbs', 'Herb microgreens'),
-('Brassicas', 'brassicas', 'Cabbage family microgreens'),
-('Legumes', 'legumes', 'Legume microgreens'),
-('Cereals', 'cereals', 'Grain microgreens');
-
--- Insert sample products
-INSERT INTO products (category_id, name, slug, description, price, cost_price, stock_quantity, low_stock_threshold, unit, sku, is_featured) VALUES 
-(1, 'Sunflower Shoots', 'sunflower-shoots', 'Nutty and crunchy sunflower microgreens, perfect for salads and sandwiches', 8.99, 4.50, 45, 15, 'tray', 'MG-SUN-001', 1),
-(1, 'Pea Shoots', 'pea-shoots', 'Sweet and tender pea shoots, great for stir-fries', 6.99, 3.00, 32, 10, 'tray', 'MG-PEA-001', 1),
-(2, 'Basil Microgreens', 'basil-microgreens', 'Aromatic basil microgreens with intense flavor', 10.99, 5.50, 28, 10, 'tray', 'MG-BAS-001', 1),
-(2, 'Cilantro Microgreens', 'cilantro-microgreens', 'Fresh cilantro microgreens for Mexican and Asian dishes', 9.99, 4.75, 38, 12, 'tray', 'MG-CIL-001', 0),
-(3, 'Broccoli Microgreens', 'broccoli-microgreens', 'High nutrition broccoli microgreens', 7.99, 3.75, 55, 15, 'tray', 'MG-BRO-001', 1),
-(3, 'Radish Microgreens', 'radish-microgreens', 'Spicy radish microgreens with peppery flavor', 5.99, 2.50, 42, 12, 'tray', 'MG-RAD-001', 0),
-(4, 'Mung Bean Sprouts', 'mung-bean-sprouts', 'Fresh mung bean sprouts for Asian cuisine', 4.99, 2.00, 60, 20, 'pack', 'MG-MUN-001', 0),
-(5, 'Wheatgrass', 'wheatgrass', 'Organic wheatgrass for juices and smoothies', 12.99, 6.00, 25, 8, 'tray', 'MG-WHE-001', 1),
-(1, 'Mixed Greens', 'mixed-greens', 'Assorted leafy microgreens mix', 11.99, 5.00, 35, 10, 'tray', 'MG-MIX-001', 1),
-(2, 'Mint Microgreens', 'mint-microgreens', 'Refreshing mint microgreens', 9.99, 4.50, 22, 8, 'tray', 'MG-MIN-001', 0);
-
--- Insert sample customers
-INSERT INTO customers (first_name, last_name, email, phone, password, address, city, state, zip_code, total_orders, total_spent) VALUES 
-('John', 'Smith', 'john.smith@email.com', '555-0101', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '123 Main St', 'New York', 'NY', '10001', 5, 245.50),
-('Sarah', 'Johnson', 'sarah.j@email.com', '555-0102', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '456 Oak Ave', 'Los Angeles', 'CA', '90001', 8, 412.30),
-('Michael', 'Brown', 'm.brown@email.com', '555-0103', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '789 Pine Rd', 'Chicago', 'IL', '60601', 3, 156.75),
-('Emily', 'Davis', 'emily.d@email.com', '555-0104', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '321 Elm St', 'Houston', 'TX', '77001', 12, 589.90),
-('David', 'Wilson', 'd.wilson@email.com', '555-0105', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '654 Maple Dr', 'Phoenix', 'AZ', '85001', 2, 89.50);
-
--- Insert sample orders
-INSERT INTO orders (order_number, customer_id, subtotal, tax, shipping_cost, discount, total, status, payment_status, payment_method, tracking_number, delivery_date) VALUES 
-('ORD-2026-001', 1, 35.96, 2.88, 5.00, 0.00, 43.84, 'delivered', 'paid', 'credit_card', 'TRK001234567', '2026-03-25'),
-('ORD-2026-002', 2, 52.94, 4.24, 0.00, 5.00, 52.18, 'delivered', 'paid', 'paypal', 'TRK001234568', '2026-03-26'),
-('ORD-2026-003', 3, 17.98, 1.44, 5.00, 0.00, 24.42, 'processing', 'paid', 'credit_card', NULL, '2026-03-28'),
-('ORD-2026-004', 4, 89.92, 7.19, 0.00, 10.00, 87.11, 'shipped', 'paid', 'credit_card', 'TRK001234570', '2026-03-27'),
-('ORD-2026-005', 5, 23.97, 1.92, 5.00, 0.00, 30.89, 'pending', 'pending', 'cash_on_delivery', NULL, '2026-03-29'),
-('ORD-2026-006', 1, 44.95, 3.60, 0.00, 0.00, 48.55, 'delivered', 'paid', 'credit_card', 'TRK001234572', '2026-03-24'),
-('ORD-2026-007', 2, 67.93, 5.43, 0.00, 0.00, 73.36, 'processing', 'paid', 'paypal', NULL, '2026-03-30');
-
--- Insert sample order items
-INSERT INTO order_items (order_id, product_id, product_name, product_price, quantity, subtotal) VALUES 
-(1, 1, 'Sunflower Shoots', 8.99, 2, 17.98),
-(1, 2, 'Pea Shoots', 6.99, 1, 6.99),
-(1, 5, 'Broccoli Microgreens', 7.99, 1, 7.99),
-(2, 1, 'Sunflower Shoots', 8.99, 2, 17.98),
-(2, 3, 'Basil Microgreens', 10.99, 2, 21.98),
-(2, 9, 'Mixed Greens', 11.99, 1, 11.99),
-(3, 6, 'Radish Microgreens', 5.99, 2, 11.98),
-(3, 7, 'Mung Bean Sprouts', 4.99, 1, 4.99),
-(4, 8, 'Wheatgrass', 12.99, 2, 25.98),
-(4, 1, 'Sunflower Shoots', 8.99, 3, 26.97),
-(4, 9, 'Mixed Greens', 11.99, 2, 23.98),
-(4, 3, 'Basil Microgreens', 10.99, 1, 10.99),
-(5, 2, 'Pea Shoots', 6.99, 2, 13.98),
-(5, 4, 'Cilantro Microgreens', 9.99, 1, 9.99),
-(6, 8, 'Wheatgrass', 12.99, 2, 25.98),
-(6, 1, 'Sunflower Shoots', 8.99, 2, 17.98),
-(7, 5, 'Broccoli Microgreens', 7.99, 3, 23.97),
-(7, 9, 'Mixed Greens', 11.99, 2, 23.98),
-(7, 10, 'Mint Microgreens', 9.99, 2, 19.98);
+-- Insert sample sales records
+INSERT INTO sales (order_id, amount, sale_date) VALUES 
+(1, 43.85, '2024-01-15'),
+(2, 36.30, '2024-01-16'),
+(3, 64.35, '2024-01-18'),
+(4, 26.58, '2024-01-19'),
+(5, 50.33, '2024-01-20'),
+(6, 35.22, '2024-01-21'),
+(7, 17.27, '2024-01-12'),
+(8, 79.47, '2024-01-22');

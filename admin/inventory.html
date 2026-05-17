@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - Microgreens Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 20h10"></path>
+                        <path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+                        <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path>
+                        <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-title">
+                    <h2>Microgreens</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                        Dashboard
+                    </a>
+                    <a href="ai.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z"></path>
+                            <path d="M12 6v4l2 2"></path>
+                            <path d="M12 16h.01"></path>
+                        </svg>
+                        AI Analytics
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="products.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                        Products
+                    </a>
+                    <a href="customers.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Customers
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        Orders
+                    </a>
+                    <a href="inventory.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        Inventory
+                    </a>
+                    <a href="delivery.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        Delivery
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="reports.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Reports
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="userName">Admin User</div>
+                        <div class="sidebar-user-role" id="userRole">Administrator</div>
+                    </div>
+                    <button class="btn-icon sm" onclick="logout()" title="Logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        
+        <div class="mobile-menu-overlay" id="mobileOverlay"></div>
+        
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <h1 style="font-size: 20px; font-weight: 600;">Inventory</h1>
+                </div>
+            </header>
+            
+            <div class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Inventory Management</h1>
+                        <p class="page-subtitle">Track stock levels and manage inventory</p>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" style="margin-bottom:24px;">
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Total Products</h4>
+                            <h2 id="totalProducts">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon yellow">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Low Stock</h4>
+                            <h2 id="lowStockCount">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon red">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Out of Stock</h4>
+                            <h2 id="outStockCount">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon green">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Inventory Value</h4>
+                            <h2 id="inventoryValue">Rs 0</h2>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <div class="filter-item search-box" style="flex:1; min-width:250px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="form-input" placeholder="Search products..." id="searchInput" oninput="debounceSearch()">
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select" id="stockFilter" onchange="loadInventory()">
+                            <option value="">All Stock</option>
+                            <option value="good">Good Stock</option>
+                            <option value="low">Low Stock</option>
+                            <option value="out">Out of Stock</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Current Stock</th>
+                                    <th>Threshold</th>
+                                    <th>Status</th>
+                                    <th style="width:120px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryTable">
+                                <tr>
+                                    <td colspan="6"><div class="loading"><div class="spinner"></div></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer" id="paginationInfo" style="display:none;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span id="paginationText"></span>
+                            <div class="pagination" id="pagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="stockModal">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-header">
+                <h3>Update Stock</h3>
+                <button class="modal-close" onclick="closeStockModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="stockProductId">
+                <p id="stockProductName" style="font-weight:500;margin-bottom:16px;"></p>
+                <div class="form-group">
+                    <label class="form-label">New Stock Quantity</label>
+                    <input type="number" class="form-input" id="newStockQuantity" min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reason</label>
+                    <select class="form-select" id="stockReason">
+                        <option value="restock">Restock</option>
+                        <option value="adjustment">Adjustment</option>
+                        <option value="damage">Damage/Loss</option>
+                        <option value="return">Return</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <input type="text" class="form-input" id="stockNotes" placeholder="Optional notes">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeStockModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveStock()">Update Stock</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentPage = 1;
+        let searchTimeout;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadStats();
+            loadInventory();
+            setupMobileMenu();
+        });
+
+        function setupMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const menuToggle = document.getElementById('menuToggle');
+
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('api/inventory.php?action=stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalProducts').textContent = data.stats.total;
+                    document.getElementById('lowStockCount').textContent = data.stats.low_stock;
+                    document.getElementById('outStockCount').textContent = data.stats.out_of_stock;
+                    document.getElementById('inventoryValue').textContent = formatCurrency(data.stats.total_value);
+                }
+            } catch (error) {
+                console.error('Failed to load stats');
+            }
+        }
+
+        async function loadInventory(page = 1) {
+            const search = document.getElementById('searchInput').value;
+            const filter = document.getElementById('stockFilter').value;
+            const tbody = document.getElementById('inventoryTable');
+            
+            tbody.innerHTML = '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+            
+            try {
+                let url = `api/inventory.php?action=list&page=${page}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                if (filter) url += `&filter=${filter}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentPage = data.pagination.page;
+                    
+                    if (data.inventory.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg><h4>No products found</h4></div></td></tr>';
+                        document.getElementById('paginationInfo').style.display = 'none';
+                    } else {
+                        tbody.innerHTML = data.inventory.map(item => `
+                            <tr>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:12px;">
+                                        <div style="width:40px;height:40px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                            ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;">` : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path></svg>'}
+                                        </div>
+                                        <div>
+                                            <div style="font-weight:500;">${item.name}</div>
+                                            <div style="font-size:12px;color:var(--text-light);">${formatCurrency(item.price)}/${item.unit}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${item.category_name || '-'}</td>
+                                <td><strong style="font-size:18px;">${item.stock_quantity}</strong> ${item.unit}</td>
+                                <td>${item.low_stock_threshold}</td>
+                                <td>
+                                    ${item.stock_status === 'out' ? '<span class="badge badge-danger">Out of Stock</span>' :
+                                      item.stock_status === 'low' ? '<span class="badge badge-warning">Low Stock</span>' :
+                                      '<span class="badge badge-success">In Stock</span>'}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-secondary" onclick="openStockModal(${item.id}, '${item.name}', ${item.stock_quantity})">
+                                        Update Stock
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                        
+                        updatePagination(data.pagination);
+                    }
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>Failed to load inventory</p></div></td></tr>';
+            }
+        }
+
+        function updatePagination(pagination) {
+            document.getElementById('paginationInfo').style.display = 'flex';
+            document.getElementById('paginationText').textContent = `Showing ${((pagination.page - 1) * pagination.per_page) + 1} to ${Math.min(pagination.page * pagination.per_page, pagination.total)} of ${pagination.total} products`;
+            
+            let html = '';
+            if (pagination.page > 1) {
+                html += `<button onclick="loadInventory(${pagination.page - 1})">&laquo; Prev</button>`;
+            }
+            for (let i = 1; i <= pagination.total_pages; i++) {
+                if (i === 1 || i === pagination.total_pages || (i >= pagination.page - 1 && i <= pagination.page + 1)) {
+                    html += `<button class="${i === pagination.page ? 'active' : ''}" onclick="loadInventory(${i})">${i}</button>`;
+                }
+            }
+            if (pagination.page < pagination.total_pages) {
+                html += `<button onclick="loadInventory(${pagination.page + 1})">Next &raquo;</button>`;
+            }
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => loadInventory(1), 300);
+        }
+
+        function openStockModal(id, name, currentStock) {
+            document.getElementById('stockProductId').value = id;
+            document.getElementById('stockProductName').textContent = name;
+            document.getElementById('newStockQuantity').value = currentStock;
+            document.getElementById('stockModal').classList.add('active');
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeStockModal() {
+            document.getElementById('stockModal').classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        }
+
+        async function saveStock() {
+            const id = document.getElementById('stockProductId').value;
+            const quantity = document.getElementById('newStockQuantity').value;
+            const reason = document.getElementById('stockReason').value;
+            const notes = document.getElementById('stockNotes').value;
+            
+            try {
+                const response = await fetch(`api/inventory.php?action=update&id=${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quantity, reason, notes })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', 'Stock Updated', `Changed from ${data.old_quantity} to ${data.new_quantity}`);
+                    closeStockModal();
+                    loadInventory(currentPage);
+                    loadStats();
+                } else {
+                    showToast('error', 'Error', data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Error', 'Failed to update stock');
+            }
+        }
+    </script>
+</body>
+</html>

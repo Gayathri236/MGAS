@@ -1,387 +1,428 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
-requireLogin();
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
-$conn = connectDB();
-$action = sanitize($_GET['action'] ?? 'list');
+require_once '../config/database.php';
+require_once '../config/functions.php';
 
-switch ($action) {
-    case 'list':
-        getOrders($conn);
+requireAuth();
+
+$database = new Database();
+$db = $database->getConnection();
+
+$method = $_SERVER['REQUEST_METHOD'];
+$action = $_GET['action'] ?? '';
+
+// Helper functions
+if (!function_exists('generateOrderNumber')) {
+    function generateOrderNumber() {
+        return 'ORD-' . date('Ymd') . '-' . rand(1000, 9999);
+    }
+}
+
+if (!function_exists('generateTrackingNumber')) {
+    function generateTrackingNumber() {
+        return 'TRK' . date('Ymd') . rand(10000, 99999);
+    }
+}
+
+switch ($method) {
+    case 'GET':
+        if ($action === 'list' || empty($action)) {
+            $search = isset($_GET['search']) ? sanitize($_GET['search']) : '';
+            $status = isset($_GET['status']) ? sanitize($_GET['status']) : '';
+            $date_from = isset($_GET['date_from']) ? sanitize($_GET['date_from']) : '';
+            $date_to = isset($_GET['date_to']) ? sanitize($_GET['date_to']) : '';
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+            
+            $pagination = paginate($page, $perPage);
+            
+            $where = "WHERE 1=1";
+            $params = [];
+            
+            if (!empty($search)) {
+                $where .= " AND (o.order_number LIKE ? OR c.name LIKE ? OR c.email LIKE ? OR c.phone LIKE ?)";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+            }
+            
+            if (!empty($status)) {
+                $where .= " AND o.status = ?";
+                $params[] = $status;
+            }
+            
+            if (!empty($date_from)) {
+                $where .= " AND DATE(o.created_at) >= ?";
+                $params[] = $date_from;
+            }
+            
+            if (!empty($date_to)) {
+                $where .= " AND DATE(o.created_at) <= ?";
+                $params[] = $date_to;
+            }
+            
+            $countStmt = $db->prepare("SELECT COUNT(*) as total FROM orders o LEFT JOIN customers c ON o.customer_id = c.id $where");
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetch()['total'];
+            
+            $stmt = $db->prepare("
+                SELECT o.*, 
+                       c.name as customer_name, 
+                       c.email as customer_email, 
+                       c.phone as customer_phone,
+                       c.address as customer_address
+                FROM orders o 
+                LEFT JOIN customers c ON o.customer_id = c.id 
+                $where 
+                ORDER BY o.created_at DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute(array_merge($params, [$pagination['limit'], $pagination['offset']]));
+            $orders = $stmt->fetchAll();
+            
+            foreach ($orders as &$order) {
+                $itemsStmt = $db->prepare("
+                    SELECT oi.*, p.name as product_name, p.price as current_price 
+                    FROM order_items oi 
+                    LEFT JOIN products p ON oi.product_id = p.id 
+                    WHERE oi.order_id = ?
+                ");
+                $itemsStmt->execute([$order['id']]);
+                $order['items'] = $itemsStmt->fetchAll();
+            }
+            
+            response([
+                'success' => true,
+                'orders' => $orders,
+                'pagination' => [
+                    'total' => $total,
+                    'page' => $pagination['page'],
+                    'per_page' => $pagination['per_page'],
+                    'total_pages' => ceil($total / $pagination['per_page'])
+                ]
+            ]);
+        } 
+        elseif ($action === 'get' && isset($_GET['id'])) {
+            $stmt = $db->prepare("
+                SELECT o.*, 
+                       c.name as customer_name, 
+                       c.email as customer_email, 
+                       c.phone as customer_phone,
+                       c.address as customer_address,
+                       c.city as customer_city,
+                       c.postal_code
+                FROM orders o 
+                LEFT JOIN customers c ON o.customer_id = c.id 
+                WHERE o.id = ?
+            ");
+            $stmt->execute([(int)$_GET['id']]);
+            $order = $stmt->fetch();
+            
+            if ($order) {
+                $itemsStmt = $db->prepare("
+                    SELECT oi.*, p.name as product_name, p.price as current_price 
+                    FROM order_items oi 
+                    LEFT JOIN products p ON oi.product_id = p.id 
+                    WHERE oi.order_id = ?
+                ");
+                $itemsStmt->execute([$order['id']]);
+                $order['items'] = $itemsStmt->fetchAll();
+                
+                response(['success' => true, 'order' => $order]);
+            } else {
+                response(['error' => 'Order not found'], 404);
+            }
+        } 
+        elseif ($action === 'stats') {
+            $stmt = $db->query("SELECT COUNT(*) as total FROM orders");
+            $total = (int)$stmt->fetch()['total'];
+            
+            $statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+            $statusCounts = [];
+            foreach ($statuses as $status) {
+                $stmt = $db->prepare("SELECT COUNT(*) as count FROM orders WHERE status = ?");
+                $stmt->execute([$status]);
+                $statusCounts[$status] = (int)$stmt->fetch()['count'];
+            }
+            
+            $stmt = $db->query("SELECT COALESCE(SUM(total), 0) as total_revenue FROM orders WHERE payment_status = 'paid'");
+            $totalRevenue = (float)$stmt->fetch()['total_revenue'];
+            
+            response([
+                'success' => true,
+                'stats' => [
+                    'total' => $total,
+                    'status_counts' => $statusCounts,
+                    'total_revenue' => $totalRevenue
+                ]
+            ]);
+        }
         break;
-    case 'get':
-        getOrder($conn);
+        
+    case 'POST':
+        if ($action === 'create') {
+            $data = json_decode(file_get_contents('php://input'), true);
+            
+            $customer_id = isset($data['customer_id']) ? (int)$data['customer_id'] : null;
+            $delivery_address = sanitize($data['delivery_address'] ?? '');
+            $notes = sanitize($data['notes'] ?? '');
+            $items = $data['items'] ?? [];
+            
+            if (!$customer_id) {
+                response(['error' => 'Customer is required'], 400);
+            }
+            
+            if (empty($items)) {
+                response(['error' => 'At least one product is required'], 400);
+            }
+            
+            // Verify customer exists
+            $custCheck = $db->prepare("SELECT id, name, email, phone, address FROM customers WHERE id = ?");
+            $custCheck->execute([$customer_id]);
+            $customer = $custCheck->fetch();
+            
+            if (!$customer) {
+                response(['error' => 'Customer not found'], 400);
+            }
+            
+            // Calculate totals
+            $subtotal = 0;
+            $items_data = [];
+            
+            foreach ($items as $item) {
+                $product_id = (int)$item['product_id'];
+                $quantity = (int)$item['quantity'];
+                $price = isset($item['price']) ? (float)$item['price'] : 0;
+                
+                if ($quantity <= 0) continue;
+                
+                // If price not provided, get from database
+                if ($price == 0) {
+                    $priceStmt = $db->prepare("SELECT name, price FROM products WHERE id = ?");
+                    $priceStmt->execute([$product_id]);
+                    $product = $priceStmt->fetch();
+                    if ($product) {
+                        $price = (float)$product['price'];
+                        $product_name = $product['name'];
+                    } else {
+                        response(['error' => "Product with ID $product_id not found"], 400);
+                    }
+                } else {
+                    $nameStmt = $db->prepare("SELECT name FROM products WHERE id = ?");
+                    $nameStmt->execute([$product_id]);
+                    $product = $nameStmt->fetch();
+                    $product_name = $product ? $product['name'] : "Product #$product_id";
+                }
+                
+                $item_subtotal = $price * $quantity;
+                $subtotal += $item_subtotal;
+                $items_data[] = [
+                    'product_id' => $product_id,
+                    'product_name' => $product_name,
+                    'quantity' => $quantity,
+                    'unit_price' => $price,
+                    'subtotal' => $item_subtotal
+                ];
+            }
+            
+            if (empty($items_data)) {
+                response(['error' => 'No valid items found'], 400);
+            }
+            
+            $tax = $subtotal * 0.05; // 5% tax
+            $delivery_fee = ($subtotal > 5000) ? 0 : 250;
+            $total = $subtotal + $tax + $delivery_fee;
+            $orderNumber = generateOrderNumber();
+            $delivery_date = date('Y-m-d', strtotime('+2 days'));
+            
+            $db->beginTransaction();
+            
+            try {
+                // Check if delivery_address column exists, if not, use a default or skip
+                $stmt = $db->prepare("
+                    INSERT INTO orders (
+                        order_number, customer_id, subtotal, tax, delivery_fee, total, 
+                        payment_method, delivery_date, delivery_address, notes, 
+                        status, payment_status, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, 'cash', ?, ?, ?, 'pending', 'pending', NOW())
+                ");
+                
+                $finalAddress = $delivery_address ?: ($customer['address'] ?? '');
+                
+                $stmt->execute([
+                    $orderNumber, $customer_id, $subtotal, $tax, $delivery_fee, $total,
+                    $delivery_date, $finalAddress, $notes
+                ]);
+                
+                $orderId = $db->lastInsertId();
+                
+                // Insert order items (skip stock update if column doesn't exist)
+                foreach ($items_data as $item) {
+                    $itemStmt = $db->prepare("
+                        INSERT INTO order_items (order_id, product_id, product_name, quantity, unit_price, subtotal)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    ");
+                    $itemStmt->execute([
+                        $orderId, $item['product_id'], $item['product_name'], 
+                        $item['quantity'], $item['unit_price'], $item['subtotal']
+                    ]);
+                    
+                    // Try to update stock only if column exists
+                    try {
+                        $stockStmt = $db->prepare("UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?");
+                        $stockStmt->execute([$item['quantity'], $item['product_id'], $item['quantity']]);
+                    } catch (Exception $e) {
+                        // Stock column doesn't exist, skip silently
+                    }
+                }
+                
+                // Update customer stats if columns exist
+                try {
+                    $custStmt = $db->prepare("
+                        UPDATE customers SET total_orders = total_orders + 1, last_order_date = NOW() 
+                        WHERE id = ?
+                    ");
+                    $custStmt->execute([$customer_id]);
+                } catch (Exception $e) {
+                    // Columns might not exist, skip
+                }
+                
+                // Generate tracking number
+                $trackingNumber = generateTrackingNumber();
+                $trackingLink = "https://track.microgreens.com/" . $trackingNumber;
+                $trackStmt = $db->prepare("UPDATE orders SET tracking_number = ?, tracking_link = ? WHERE id = ?");
+                $trackStmt->execute([$trackingNumber, $trackingLink, $orderId]);
+                
+                $db->commit();
+                
+                // Return the complete order data for UI update
+                $orderStmt = $db->prepare("
+                    SELECT o.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone
+                    FROM orders o 
+                    LEFT JOIN customers c ON o.customer_id = c.id 
+                    WHERE o.id = ?
+                ");
+                $orderStmt->execute([$orderId]);
+                $newOrder = $orderStmt->fetch();
+                
+                $itemsStmt = $db->prepare("SELECT * FROM order_items WHERE order_id = ?");
+                $itemsStmt->execute([$orderId]);
+                $newOrder['items'] = $itemsStmt->fetchAll();
+                
+                response([
+                    'success' => true,
+                    'message' => 'Order created successfully',
+                    'order_id' => $orderId,
+                    'order_number' => $orderNumber,
+                    'tracking_number' => $trackingNumber,
+                    'order' => $newOrder
+                ], 201);
+                
+            } catch (Exception $e) {
+                $db->rollBack();
+                response(['error' => 'Failed to create order: ' . $e->getMessage()], 500);
+            }
+        } 
+        elseif ($action === 'tracking' && isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            
+            $trackingNumber = generateTrackingNumber();
+            $trackingLink = "https://track.microgreens.com/" . $trackingNumber;
+            
+            $stmt = $db->prepare("UPDATE orders SET tracking_number = ?, tracking_link = ? WHERE id = ?");
+            if ($stmt->execute([$trackingNumber, $trackingLink, $id])) {
+                response([
+                    'success' => true,
+                    'message' => 'Tracking number generated',
+                    'tracking_number' => $trackingNumber,
+                    'tracking_link' => $trackingLink
+                ]);
+            } else {
+                response(['error' => 'Failed to generate tracking'], 500);
+            }
+        }
         break;
-    case 'update_status':
-        updateOrderStatus($conn);
+        
+    case 'PUT':
+        $rawInput = file_get_contents('php://input');
+        $putData = json_decode($rawInput, true);
+
+        if ($action === 'status' && isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            $status = isset($putData['status']) ? sanitize($putData['status']) : '';
+            
+            $validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+            
+            if (empty($status) || !in_array($status, $validStatuses)) {
+                response(['success' => false, 'error' => 'Invalid status'], 400);
+            }
+            
+            $stmt = $db->prepare("UPDATE orders SET status = ? WHERE id = ?");
+            
+            if ($stmt->execute([$status, $id])) {
+                if ($status === 'delivered') {
+                    try {
+                        $paymentStmt = $db->prepare("UPDATE orders SET payment_status = 'paid' WHERE id = ? AND payment_status = 'pending'");
+                        $paymentStmt->execute([$id]);
+                    } catch (Exception $e) {
+                        // Payment status column might not exist, skip
+                    }
+                }
+                
+                // Get updated order
+                $orderStmt = $db->prepare("
+                    SELECT o.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone
+                    FROM orders o 
+                    LEFT JOIN customers c ON o.customer_id = c.id 
+                    WHERE o.id = ?
+                ");
+                $orderStmt->execute([$id]);
+                $order = $orderStmt->fetch();
+                
+                response([
+                    'success' => true, 
+                    'message' => 'Order status updated successfully',
+                    'order' => $order
+                ]);
+            } else {
+                response(['success' => false, 'error' => 'Database update failed'], 500);
+            }
+        } 
+        elseif ($action === 'payment' && isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            $paymentStatus = isset($putData['payment_status']) ? sanitize($putData['payment_status']) : '';
+            
+            $validPaymentStatuses = ['pending', 'paid', 'failed', 'refunded'];
+            
+            if (empty($paymentStatus) || !in_array($paymentStatus, $validPaymentStatuses)) {
+                response(['success' => false, 'error' => 'Invalid payment status'], 400);
+            }
+
+            $stmt = $db->prepare("UPDATE orders SET payment_status = ? WHERE id = ?");
+            
+            if ($stmt->execute([$paymentStatus, $id])) {
+                response(['success' => true, 'message' => 'Payment status updated successfully']);
+            } else {
+                response(['success' => false, 'error' => 'Failed to update payment status'], 500);
+            }
+        } 
+        else {
+            response(['success' => false, 'error' => 'Invalid action or missing ID'], 400);
+        }
         break;
-    case 'update_tracking':
-        updateTracking($conn);
-        break;
-    case 'generate_bill':
-        generateBill($conn);
-        break;
-    case 'create':
-        createOrder($conn);
-        break;
+        
     default:
-        jsonResponse(false, 'Invalid action');
+        response(['error' => 'Invalid request method'], 400);
+        break;
 }
-
-function getOrders($conn) {
-    $page = (int)($_GET['page'] ?? 1);
-    $limit = (int)($_GET['limit'] ?? 10);
-    $search = sanitize($_GET['search'] ?? '');
-    $status = sanitize($_GET['status'] ?? '');
-    $payment = sanitize($_GET['payment'] ?? '');
-    $offset = ($page - 1) * $limit;
-    
-    $where = ['1=1'];
-    $params = [];
-    $types = '';
-    
-    if ($search) {
-        $where[] = "(o.order_number LIKE ? OR c.first_name LIKE ? OR c.last_name LIKE ? OR c.email LIKE ?)";
-        $searchTerm = "%$search%";
-        $params[] = $searchTerm;
-        $params[] = $searchTerm;
-        $params[] = $searchTerm;
-        $params[] = $searchTerm;
-        $types .= 'ssss';
-    }
-    
-    if ($status) {
-        $where[] = "o.status = ?";
-        $params[] = $status;
-        $types .= 's';
-    }
-    
-    if ($payment) {
-        $where[] = "o.payment_status = ?";
-        $params[] = $payment;
-        $types .= 's';
-    }
-    
-    $whereClause = implode(' AND ', $where);
-    
-    $countSql = "SELECT COUNT(*) as total FROM orders o LEFT JOIN customers c ON o.customer_id = c.id WHERE $whereClause";
-    $stmt = $conn->prepare($countSql);
-    if ($params) {
-        $stmt->bind_param($types, ...$params);
-    }
-    $stmt->execute();
-    $total = $stmt->get_result()->fetch_assoc()['total'];
-    $stmt->close();
-    
-    $sql = "SELECT o.*, c.first_name, c.last_name, c.email, c.phone,
-            (SELECT COUNT(*) FROM order_items WHERE order_id = o.id) as items_count
-            FROM orders o 
-            LEFT JOIN customers c ON o.customer_id = c.id 
-            WHERE $whereClause 
-            ORDER BY o.created_at DESC 
-            LIMIT ? OFFSET ?";
-    
-    $params[] = $limit;
-    $params[] = $offset;
-    $types .= 'ii';
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-    $orders = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    jsonResponse(true, 'Orders loaded', [
-        'orders' => $orders,
-        'pagination' => [
-            'total' => $total,
-            'page' => $page,
-            'limit' => $limit,
-            'pages' => ceil($total / $limit)
-        ]
-    ]);
-}
-
-function getOrder($conn) {
-    $id = (int)($_GET['id'] ?? 0);
-    
-    if (!$id) {
-        jsonResponse(false, 'Order ID required');
-    }
-    
-    $stmt = $conn->prepare("
-        SELECT o.*, c.first_name, c.last_name, c.email, c.phone, c.address as customer_address, c.city as customer_city, c.state as customer_state, c.zip_code
-        FROM orders o 
-        LEFT JOIN customers c ON o.customer_id = c.id 
-        WHERE o.id = ?
-    ");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $order = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    
-    if (!$order) {
-        jsonResponse(false, 'Order not found');
-    }
-    
-    $itemsStmt = $conn->prepare("SELECT * FROM order_items WHERE order_id = ?");
-    $itemsStmt->bind_param("i", $id);
-    $itemsStmt->execute();
-    $items = $itemsStmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $itemsStmt->close();
-    
-    jsonResponse(true, 'Order loaded', [
-        'order' => $order,
-        'items' => $items
-    ]);
-}
-
-function updateOrderStatus($conn) {
-    $id = (int)($_POST['id'] ?? 0);
-    $status = sanitize($_POST['status'] ?? '');
-    
-    if (!$id || !$status) {
-        jsonResponse(false, 'Order ID and status are required');
-    }
-    
-    $validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
-    if (!in_array($status, $validStatuses)) {
-        jsonResponse(false, 'Invalid status');
-    }
-    
-    $deliveredAt = $status === 'delivered' ? date('Y-m-d H:i:s') : null;
-    
-    $stmt = $conn->prepare("UPDATE orders SET status = ?, delivered_at = ? WHERE id = ?");
-    $stmt->bind_param("ssi", $status, $deliveredAt, $id);
-    
-    if ($stmt->execute()) {
-        $orderStmt = $conn->prepare("SELECT order_number FROM orders WHERE id = ?");
-        $orderStmt->bind_param("i", $id);
-        $orderStmt->execute();
-        $orderNum = $orderStmt->get_result()->fetch_assoc()['order_number'];
-        $orderStmt->close();
-        
-        logActivity($conn, $_SESSION['admin_id'], 'update', 'orders', $id, "Changed status to $status for order $orderNum");
-        jsonResponse(true, 'Order status updated');
-    } else {
-        jsonResponse(false, 'Failed to update status');
-    }
-    
-    $stmt->close();
-}
-
-function updateTracking($conn) {
-    $id = (int)($_POST['id'] ?? 0);
-    $tracking_number = sanitize($_POST['tracking_number'] ?? '');
-    $tracking_link = sanitize($_POST['tracking_link'] ?? '');
-    
-    if (!$id) {
-        jsonResponse(false, 'Order ID required');
-    }
-    
-    $stmt = $conn->prepare("UPDATE orders SET tracking_number = ?, tracking_link = ? WHERE id = ?");
-    $stmt->bind_param("ssi", $tracking_number, $tracking_link, $id);
-    
-    if ($stmt->execute()) {
-        jsonResponse(true, 'Tracking information updated');
-    } else {
-        jsonResponse(false, 'Failed to update tracking');
-    }
-    
-    $stmt->close();
-}
-
-function generateBill($conn) {
-    $id = (int)($_GET['id'] ?? 0);
-    
-    if (!$id) {
-        jsonResponse(false, 'Order ID required');
-    }
-    
-    $stmt = $conn->prepare("
-        SELECT o.*, c.first_name, c.last_name, c.email, c.phone, c.address as customer_address, c.city as customer_city, c.state as customer_state, c.zip_code
-        FROM orders o 
-        LEFT JOIN customers c ON o.customer_id = c.id 
-        WHERE o.id = ?
-    ");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $order = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    
-    if (!$order) {
-        jsonResponse(false, 'Order not found');
-    }
-    
-    $itemsStmt = $conn->prepare("SELECT * FROM order_items WHERE order_id = ?");
-    $itemsStmt->bind_param("i", $id);
-    $itemsStmt->execute();
-    $items = $itemsStmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $itemsStmt->close();
-    
-    ob_start();
-    ?>
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Invoice <?php echo $order['order_number']; ?></title>
-        <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
-            .invoice-header { display: flex; justify-content: space-between; margin-bottom: 40px; }
-            .company h1 { color: #10B981; font-size: 28px; }
-            .company p { color: #666; font-size: 14px; }
-            .invoice-info { text-align: right; }
-            .invoice-info h2 { font-size: 24px; color: #333; }
-            .invoice-info p { font-size: 14px; color: #666; margin: 4px 0; }
-            .billing { display: flex; justify-content: space-between; margin-bottom: 30px; }
-            .billing div { width: 45%; }
-            .billing h4 { color: #10B981; margin-bottom: 10px; font-size: 14px; }
-            .billing p { font-size: 14px; margin: 4px 0; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-            th { background: #10B981; color: white; padding: 12px; text-align: left; }
-            td { padding: 12px; border-bottom: 1px solid #eee; }
-            .text-right { text-align: right; }
-            .totals { width: 300px; margin-left: auto; }
-            .totals tr td { padding: 8px; }
-            .totals tr:last-child { font-weight: bold; font-size: 18px; color: #10B981; }
-            .footer { margin-top: 50px; text-align: center; color: #666; font-size: 12px; }
-        </style>
-    </head>
-    <body>
-        <div class="invoice-header">
-            <div class="company">
-                <h1>Microgreens</h1>
-                <p>Fresh Microgreens & Sprouts</p>
-            </div>
-            <div class="invoice-info">
-                <h2>INVOICE</h2>
-                <p><strong><?php echo $order['order_number']; ?></strong></p>
-                <p>Date: <?php echo date('M d, Y', strtotime($order['created_at'])); ?></p>
-                <p>Status: <?php echo ucfirst($order['status']); ?></p>
-            </div>
-        </div>
-        
-        <div class="billing">
-            <div>
-                <h4>BILLED TO</h4>
-                <p><strong><?php echo $order['first_name'] . ' ' . $order['last_name']; ?></strong></p>
-                <p><?php echo $order['email']; ?></p>
-                <p><?php echo $order['phone']; ?></p>
-                <p><?php echo $order['shipping_address']; ?></p>
-                <p><?php echo $order['shipping_city'] . ', ' . $order['shipping_state'] . ' ' . $order['shipping_zip']; ?></p>
-            </div>
-            <div>
-                <h4>SHIP TO</h4>
-                <p><strong><?php echo $order['shipping_name'] ?: ($order['first_name'] . ' ' . $order['last_name']); ?></strong></p>
-                <p><?php echo $order['shipping_address']; ?></p>
-                <p><?php echo $order['shipping_city'] . ', ' . $order['shipping_state'] . ' ' . $order['shipping_zip']; ?></p>
-            </div>
-        </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th class="text-right">Price</th>
-                    <th class="text-right">Qty</th>
-                    <th class="text-right">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($items as $item): ?>
-                <tr>
-                    <td><?php echo $item['product_name']; ?></td>
-                    <td class="text-right">$<?php echo number_format($item['product_price'], 2); ?></td>
-                    <td class="text-right"><?php echo $item['quantity']; ?></td>
-                    <td class="text-right">$<?php echo number_format($item['subtotal'], 2); ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        
-        <table class="totals">
-            <tr>
-                <td>Subtotal</td>
-                <td class="text-right">$<?php echo number_format($order['subtotal'], 2); ?></td>
-            </tr>
-            <?php if ($order['tax'] > 0): ?>
-            <tr>
-                <td>Tax</td>
-                <td class="text-right">$<?php echo number_format($order['tax'], 2); ?></td>
-            </tr>
-            <?php endif; ?>
-            <?php if ($order['shipping_cost'] > 0): ?>
-            <tr>
-                <td>Shipping</td>
-                <td class="text-right">$<?php echo number_format($order['shipping_cost'], 2); ?></td>
-            </tr>
-            <?php endif; ?>
-            <?php if ($order['discount'] > 0): ?>
-            <tr>
-                <td>Discount</td>
-                <td class="text-right">-$<?php echo number_format($order['discount'], 2); ?></td>
-            </tr>
-            <?php endif; ?>
-            <tr>
-                <td>TOTAL</td>
-                <td class="text-right">$<?php echo number_format($order['total'], 2); ?></td>
-            </tr>
-        </table>
-        
-        <?php if ($order['tracking_number']): ?>
-        <div style="margin-top: 30px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
-            <p><strong>Tracking Number:</strong> <?php echo $order['tracking_number']; ?></p>
-            <?php if ($order['tracking_link']): ?>
-            <p><strong>Track at:</strong> <a href="<?php echo $order['tracking_link']; ?>"><?php echo $order['tracking_link']; ?></a></p>
-            <?php endif; ?>
-        </div>
-        <?php endif; ?>
-        
-        <div class="footer">
-            <p>Thank you for your business!</p>
-            <p>Microgreens Admin Panel</p>
-        </div>
-    </body>
-    </html>
-    <?php
-    
-    $html = ob_get_clean();
-    
-    jsonResponse(true, 'Bill generated', ['html' => $html]);
-}
-
-function createOrder($conn) {
-    $customer_id = (int)($_POST['customer_id'] ?? 0);
-    
-    if (!$customer_id) {
-        jsonResponse(false, 'Customer is required');
-    }
-    
-    $order_number = generateOrderNumber();
-    $subtotal = (float)($_POST['subtotal'] ?? 0);
-    $tax = (float)($_POST['tax'] ?? 0);
-    $shipping_cost = (float)($_POST['shipping_cost'] ?? 0);
-    $discount = (float)($_POST['discount'] ?? 0);
-    $total = $subtotal + $tax + $shipping_cost - $discount;
-    $payment_method = sanitize($_POST['payment_method'] ?? 'cash_on_delivery');
-    $notes = sanitize($_POST['notes'] ?? '');
-    
-    $stmt = $conn->prepare("
-        INSERT INTO orders (order_number, customer_id, subtotal, tax, shipping_cost, discount, total, payment_method, notes, payment_status, status) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending')
-    ");
-    $stmt->bind_param("siddddss", $order_number, $customer_id, $subtotal, $tax, $shipping_cost, $discount, $total, $payment_method, $notes);
-    
-    if ($stmt->execute()) {
-        $orderId = $conn->insert_id;
-        logActivity($conn, $_SESSION['admin_id'], 'create', 'orders', $orderId, "Created manual order: $order_number");
-        jsonResponse(true, 'Order created successfully', ['order_id' => $orderId]);
-    } else {
-        jsonResponse(false, 'Failed to create order');
-    }
-    
-    $stmt->close();
-}
+?>

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers - Microgreens Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 20h10"></path>
+                        <path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+                        <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path>
+                        <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-title">
+                    <h2>Microgreens</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                        Dashboard
+                    </a>
+                    <a href="ai.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z"></path>
+                            <path d="M12 6v4l2 2"></path>
+                            <path d="M12 16h.01"></path>
+                        </svg>
+                        AI Analytics
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="products.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                        Products
+                    </a>
+                    <a href="customers.html" class="nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Customers
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        Orders
+                    </a>
+                    <a href="inventory.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        Inventory
+                    </a>
+                    <a href="delivery.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        Delivery
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="reports.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Reports
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="userName">Admin User</div>
+                        <div class="sidebar-user-role" id="userRole">Administrator</div>
+                    </div>
+                    <button class="btn-icon sm" onclick="logout()" title="Logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        
+        <div class="mobile-menu-overlay" id="mobileOverlay"></div>
+        
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <h1 style="font-size: 20px; font-weight: 600;">Customers</h1>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" onclick="openAddCustomerModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Add Customer
+                    </button>
+                </div>
+            </header>
+            
+            <div class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Customer Management</h1>
+                        <p class="page-subtitle">Manage your customer database</p>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" style="margin-bottom:24px;">
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Total Customers</h4>
+                            <h2 id="totalCustomers">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon green">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Active</h4>
+                            <h2 id="activeCustomers">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon red">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Blocked</h4>
+                            <h2 id="blockedCustomers">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card fade-in">
+                        <div class="stat-icon purple">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#8b5cf6;"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path><path d="M12 6v4l2 2"></path></svg>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Avg. Spending</h4>
+                            <h2 id="avgSpending">$0</h2>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <div class="filter-item search-box" style="flex:1; min-width:250px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="form-input" placeholder="Search customers..." id="searchInput" oninput="debounceSearch()">
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select" id="statusFilter" onchange="loadCustomers()">
+                            <option value="">All Customers</option>
+                            <option value="active">Active</option>
+                            <option value="blocked">Blocked</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Location</th>
+                                    <th>Total Spent</th>
+                                    <th>Status</th>
+                                    <th style="width:150px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTable">
+                                <tr>
+                                    <td colspan="7"><div class="loading"><div class="spinner"></div></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer" id="paginationInfo" style="display:none;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span id="paginationText"></span>
+                            <div class="pagination" id="pagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Customer Modal -->
+    <div class="modal-overlay" id="customerModal">
+        <div class="modal" style="max-width:550px;">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Customer</h3>
+                <button class="modal-close" onclick="closeCustomerModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="customerForm" onsubmit="saveCustomer(event)">
+                    <input type="hidden" id="customerId">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" class="form-input" id="customerName" required placeholder="Enter customer name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-input" id="customerEmail" required placeholder="Enter email address">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="text" class="form-input" id="customerPhone" placeholder="Enter phone number">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <input type="text" class="form-input" id="customerAddress" placeholder="Enter street address">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input type="text" class="form-input" id="customerCity" placeholder="Enter city">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Postal Code</label>
+                        <input type="text" class="form-input" id="customerPostalCode" placeholder="Enter postal code">
+                    </div>
+                    <div style="display:flex;gap:12px;margin-top:20px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeCustomerModal()" style="flex:1;">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="flex:1;">Save Customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Customer Modal -->
+    <div class="modal-overlay" id="viewCustomerModal">
+        <div class="modal" style="max-width:700px;">
+            <div class="modal-header">
+                <h3>Customer Details</h3>
+                <button class="modal-close" onclick="closeViewCustomerModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="customerDetails">
+                <div class="loading"><div class="spinner"></div></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeViewCustomerModal()">Close</button>
+                <button class="btn btn-primary" id="editCustomerBtn" onclick="editCustomerFromView()">Edit Customer</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentPage = 1;
+        let currentViewCustomer = null;
+        let searchTimeout;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadStats();
+            loadCustomers();
+            setupMobileMenu();
+        });
+
+        function setupMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const menuToggle = document.getElementById('menuToggle');
+
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('api/customers.php?action=stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalCustomers').textContent = data.stats.total;
+                    document.getElementById('activeCustomers').textContent = data.stats.active;
+                    document.getElementById('blockedCustomers').textContent = data.stats.blocked;
+                    document.getElementById('avgSpending').textContent = formatCurrency(data.stats.avg_spent);
+                }
+            } catch (error) {
+                console.error('Failed to load stats');
+            }
+        }
+
+        async function loadCustomers(page = 1) {
+            const search = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            const tbody = document.getElementById('customersTable');
+            
+            tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
+            
+            try {
+                let url = `api/customers.php?action=list&page=${page}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                if (status) url += `&status=${status}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentPage = data.pagination.page;
+                    
+                    if (data.customers.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg><h4>No customers found</h4></div></td></tr>';
+                        document.getElementById('paginationInfo').style.display = 'none';
+                    } else {
+                        tbody.innerHTML = data.customers.map(customer => `
+                            <tr>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:12px;">
+                                        <div class="avatar sm">${customer.name.charAt(0).toUpperCase()}</div>
+                                        <strong>${customer.name}</strong>
+                                    </div>
+                                </td>
+                                <td>${customer.email}</td>
+                                <td>${customer.phone || '-'}</td>
+                                <td>${customer.city || '-'}</td>
+                                <td class="price">${formatCurrency(customer.total_spent || 0)}</td>
+                                <td>
+                                    <span class="badge ${customer.is_blocked ? 'badge-danger' : 'badge-success'}">
+                                        ${customer.is_blocked ? 'Blocked' : 'Active'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-icon sm btn-secondary" onclick="viewCustomer(${customer.id})" title="View">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                        </button>
+                                        <button class="btn btn-icon sm btn-primary" onclick="editCustomer(${customer.id})" title="Edit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                        </button>
+                                        <button class="btn btn-icon sm ${customer.is_blocked ? 'btn-success' : 'btn-danger'}" 
+                                                onclick="toggleBlockCustomer(${customer.id}, ${customer.is_blocked ? 0 : 1})" 
+                                                title="${customer.is_blocked ? 'Unblock' : 'Block'}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                ${customer.is_blocked ? 
+                                                    '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>' : 
+                                                    '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>'
+                                                }
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('');
+                        
+                        updatePagination(data.pagination);
+                    }
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>Failed to load customers</p></div></td></tr>';
+            }
+        }
+
+        function updatePagination(pagination) {
+            document.getElementById('paginationInfo').style.display = 'block';
+            document.getElementById('paginationText').textContent = `Showing ${((pagination.page - 1) * pagination.per_page) + 1} to ${Math.min(pagination.page * pagination.per_page, pagination.total)} of ${pagination.total} customers`;
+            
+            let html = '';
+            if (pagination.page > 1) {
+                html += `<button onclick="loadCustomers(${pagination.page - 1})">&laquo; Prev</button>`;
+            }
+            for (let i = 1; i <= pagination.total_pages; i++) {
+                if (i === 1 || i === pagination.total_pages || (i >= pagination.page - 1 && i <= pagination.page + 1)) {
+                    html += `<button class="${i === pagination.page ? 'active' : ''}" onclick="loadCustomers(${i})">${i}</button>`;
+                }
+            }
+            if (pagination.page < pagination.total_pages) {
+                html += `<button onclick="loadCustomers(${pagination.page + 1})">Next &raquo;</button>`;
+            }
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => loadCustomers(1), 300);
+        }
+
+        function openAddCustomerModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Customer';
+            document.getElementById('customerId').value = '';
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerModal').classList.add('active');
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeCustomerModal() {
+            document.getElementById('customerModal').classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        }
+
+        async function editCustomer(id) {
+            try {
+                const response = await fetch(`api/customers.php?action=get&id=${id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const customer = data.customer;
+                    document.getElementById('modalTitle').textContent = 'Edit Customer';
+                    document.getElementById('customerId').value = customer.id;
+                    document.getElementById('customerName').value = customer.name;
+                    document.getElementById('customerEmail').value = customer.email;
+                    document.getElementById('customerPhone').value = customer.phone || '';
+                    document.getElementById('customerAddress').value = customer.address || '';
+                    document.getElementById('customerCity').value = customer.city || '';
+                    document.getElementById('customerPostalCode').value = customer.postal_code || '';
+                    document.getElementById('customerModal').classList.add('active');
+                    document.body.classList.add('no-scroll');
+                }
+            } catch (error) {
+                showToast('error', 'Error', 'Failed to load customer');
+            }
+        }
+
+        async function saveCustomer(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('customerId').value;
+            const customerData = {
+                name: document.getElementById('customerName').value,
+                email: document.getElementById('customerEmail').value,
+                phone: document.getElementById('customerPhone').value,
+                address: document.getElementById('customerAddress').value,
+                city: document.getElementById('customerCity').value,
+                postal_code: document.getElementById('customerPostalCode').value
+            };
+            
+            try {
+                let url, method;
+                if (id) {
+                    url = `api/customers.php?action=update&id=${id}`;
+                    method = 'PUT';
+                } else {
+                    url = 'api/customers.php?action=add';
+                    method = 'POST';
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(customerData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', 'Success', data.message);
+                    closeCustomerModal();
+                    loadCustomers(currentPage);
+                    loadStats();
+                } else {
+                    showToast('error', 'Error', data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Error', 'Failed to save customer');
+            }
+        }
+
+        async function viewCustomer(id) {
+            document.getElementById('viewCustomerModal').classList.add('active');
+            document.body.classList.add('no-scroll');
+            
+            try {
+                const response = await fetch(`api/customers.php?action=get&id=${id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentViewCustomer = data.customer;
+                    const customer = data.customer;
+                    
+                    document.getElementById('customerDetails').innerHTML = `
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                            <div>
+                                <h4 style="margin-bottom:12px;">Personal Information</h4>
+                                <p><strong>Name:</strong> ${customer.name}</p>
+                                <p><strong>Email:</strong> ${customer.email}</p>
+                                <p><strong>Phone:</strong> ${customer.phone || '-'}</p>
+                                <p><strong>Status:</strong> 
+                                    <span class="badge ${customer.is_blocked ? 'badge-danger' : 'badge-success'}">
+                                        ${customer.is_blocked ? 'Blocked' : 'Active'}
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom:12px;">Address</h4>
+                                <p><strong>Address:</strong> ${customer.address || '-'}</p>
+                                <p><strong>City:</strong> ${customer.city || '-'}</p>
+                                <p><strong>Postal Code:</strong> ${customer.postal_code || '-'}</p>
+                                <p><strong>Total Spent:</strong> ${formatCurrency(customer.total_spent || 0)}</p>
+                            </div>
+                        </div>
+                        
+                        ${data.orders && data.orders.length > 0 ? `
+                            <h4 style="margin-top:24px;margin-bottom:12px;">Recent Orders</h4>
+                            <div class="table-wrapper">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order #</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${data.orders.map(order => `
+                                            <tr>
+                                                <td><strong>${order.order_number}</strong></td>
+                                                <td>${formatDate(order.created_at)}</td>
+                                                <td><span class="badge badge-${getStatusBadge(order.status)}">${capitalize(order.status)}</span></td>
+                                                <td class="price">${formatCurrency(order.total)}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ` : '<p style="margin-top:20px;">No orders yet.</p>'}
+                    `;
+                }
+            } catch (error) {
+                showToast('error', 'Error', 'Failed to load customer details');
+            }
+        }
+
+        function closeViewCustomerModal() {
+            document.getElementById('viewCustomerModal').classList.remove('active');
+            document.body.classList.remove('no-scroll');
+            currentViewCustomer = null;
+        }
+
+        function editCustomerFromView() {
+            if (currentViewCustomer) {
+                closeViewCustomerModal();
+                editCustomer(currentViewCustomer.id);
+            }
+        }
+
+        async function toggleBlockCustomer(id, blocked) {
+            try {
+                const response = await fetch(`api/customers.php?action=block&id=${id}&blocked=${blocked}`, {
+                    method: 'PUT'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', 'Success', data.message);
+                    loadCustomers(currentPage);
+                    loadStats();
+                } else {
+                    showToast('error', 'Error', data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Error', 'Failed to update customer status');
+            }
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                'pending': 'warning',
+                'processing': 'info',
+                'shipped': 'primary',
+                'delivered': 'success',
+                'cancelled': 'danger',
+                'paid': 'success',
+                'unpaid': 'warning'
+            };
+            return badges[status] || 'secondary';
+        }
+    </script>
+</body>
+</html>

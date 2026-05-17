@@ -1,169 +1,214 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
-requireLogin();
-
-$conn = connectDB();
-$action = sanitize($_GET['action'] ?? 'list');
-
-switch ($action) {
-    case 'list':
-        getInventory($conn);
-        break;
-    case 'update_stock':
-        updateStock($conn);
-        break;
-    case 'get_logs':
-        getLogs($conn);
-        break;
-    case 'get_low_stock':
-        getLowStock($conn);
-        break;
-    default:
-        jsonResponse(false, 'Invalid action');
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
 }
 
-function getInventory($conn) {
-    $search = sanitize($_GET['search'] ?? '');
-    $alert = sanitize($_GET['alert'] ?? '');
-    
-    $where = ['p.is_active = 1'];
-    $params = [];
-    $types = '';
-    
-    if ($search) {
-        $where[] = "(p.name LIKE ? OR p.sku LIKE ?)";
-        $searchTerm = "%$search%";
-        $params[] = $searchTerm;
-        $params[] = $searchTerm;
-        $types .= 'ss';
-    }
-    
-    if ($alert === 'low') {
-        $where[] = "p.stock_quantity <= p.low_stock_threshold";
-    } elseif ($alert === 'out') {
-        $where[] = "p.stock_quantity = 0";
-    }
-    
-    $whereClause = implode(' AND ', $where);
-    
-    $sql = "SELECT p.*, c.name as category_name,
-            CASE 
-                WHEN p.stock_quantity = 0 THEN 'out_of_stock'
-                WHEN p.stock_quantity <= p.low_stock_threshold THEN 'low_stock'
-                ELSE 'in_stock'
-            END as stock_status
-            FROM products p 
-            LEFT JOIN categories c ON p.category_id = c.id 
-            WHERE $whereClause 
-            ORDER BY p.stock_quantity ASC";
-    
-    $stmt = $conn->prepare($sql);
-    if ($params) {
-        $stmt->bind_param($types, ...$params);
-    }
-    $stmt->execute();
-    $products = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    $summary = [
-        'total_products' => count($products),
-        'in_stock' => count(array_filter($products, fn($p) => $p['stock_status'] === 'in_stock')),
-        'low_stock' => count(array_filter($products, fn($p) => $p['stock_status'] === 'low_stock')),
-        'out_of_stock' => count(array_filter($products, fn($p) => $p['stock_status'] === 'out_of_stock')),
-        'total_value' => array_sum(array_map(fn($p) => $p['stock_quantity'] * $p['cost_price'], $products))
-    ];
-    
-    jsonResponse(true, 'Inventory loaded', [
-        'products' => $products,
-        'summary' => $summary
-    ]);
-}
+require_once '../config/database.php';
+require_once '../config/functions.php';
 
-function updateStock($conn) {
-    $id = (int)($_POST['id'] ?? 0);
-    $quantity = (int)($_POST['quantity'] ?? 0);
-    $reason = sanitize($_POST['reason'] ?? '');
-    
-    if (!$id) {
-        jsonResponse(false, 'Product ID required');
-    }
-    
-    $stmt = $conn->prepare("SELECT stock_quantity, name FROM products WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $product = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    
-    if (!$product) {
-        jsonResponse(false, 'Product not found');
-    }
-    
-    $previousStock = $product['stock_quantity'];
-    $newStock = $quantity;
-    $change = $newStock - $previousStock;
-    
-    $updateStmt = $conn->prepare("UPDATE products SET stock_quantity = ? WHERE id = ?");
-    $updateStmt->bind_param("ii", $newStock, $id);
-    
-    if ($updateStmt->execute()) {
-        $logStmt = $conn->prepare("INSERT INTO inventory_logs (product_id, quantity_change, reason, admin_id, previous_stock, new_stock) VALUES (?, ?, ?, ?, ?, ?)");
-        $logStmt->bind_param("iissii", $id, $change, $reason, $_SESSION['admin_id'], $previousStock, $newStock);
-        $logStmt->execute();
-        $logStmt->close();
+requireAuth();
+
+$database = new Database();
+$db = $database->getConnection();
+
+$method = $_SERVER['REQUEST_METHOD'];
+$action = $_GET['action'] ?? '';
+
+switch ($method) {
+    case 'GET':
+        if ($action === 'list' || empty($action)) {
+            $search = isset($_GET['search']) ? sanitize($_GET['search']) : '';
+            $filter = isset($_GET['filter']) ? sanitize($_GET['filter']) : '';
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+            
+            $pagination = paginate($page, $perPage);
+            
+            $where = "WHERE p.is_active = 1";
+            $params = [];
+            
+            if (!empty($search)) {
+                $where .= " AND (p.name LIKE ? OR c.name LIKE ?)";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+            }
+            
+            if ($filter === 'low') {
+                $where .= " AND p.stock_quantity <= p.low_stock_threshold";
+            } elseif ($filter === 'out') {
+                $where .= " AND p.stock_quantity = 0";
+            } elseif ($filter === 'good') {
+                $where .= " AND p.stock_quantity > p.low_stock_threshold";
+            }
+            
+            $countStmt = $db->prepare("SELECT COUNT(*) as total FROM products p LEFT JOIN categories c ON p.category_id = c.id $where");
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetch()['total'];
+            
+            $stmt = $db->prepare("
+                SELECT p.*, c.name as category_name,
+                       CASE 
+                           WHEN p.stock_quantity <= 0 THEN 'out'
+                           WHEN p.stock_quantity <= p.low_stock_threshold THEN 'low'
+                           ELSE 'good'
+                       END as stock_status
+                FROM products p 
+                LEFT JOIN categories c ON p.category_id = c.id 
+                $where 
+                ORDER BY p.stock_quantity ASC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute(array_merge($params, [$pagination['limit'], $pagination['offset']]));
+            $inventory = $stmt->fetchAll();
+            
+            response([
+                'success' => true,
+                'inventory' => $inventory,
+                'pagination' => [
+                    'total' => $total,
+                    'page' => $pagination['page'],
+                    'per_page' => $pagination['per_page'],
+                    'total_pages' => ceil($total / $pagination['per_page'])
+                ]
+            ]);
+        } elseif ($action === 'history' && isset($_GET['product_id'])) {
+            $stmt = $db->prepare("
+                SELECT i.*, a.name as admin_name, p.name as product_name
+                FROM inventory i
+                JOIN products p ON i.product_id = p.id
+                LEFT JOIN admins a ON i.admin_id = a.id
+                WHERE i.product_id = ?
+                ORDER BY i.created_at DESC
+                LIMIT 50
+            ");
+            $stmt->execute([(int)$_GET['product_id']]);
+            $history = $stmt->fetchAll();
+            
+            response(['success' => true, 'history' => $history]);
+        } elseif ($action === 'stats') {
+            $stmt = $db->query("SELECT COUNT(*) as total FROM products WHERE is_active = 1");
+            $total = (int)$stmt->fetch()['total'];
+            
+            $stmt = $db->query("SELECT COUNT(*) as low FROM products WHERE stock_quantity <= low_stock_threshold AND stock_quantity > 0 AND is_active = 1");
+            $low = (int)$stmt->fetch()['low'];
+            
+            $stmt = $db->query("SELECT COUNT(*) as out_of_stock FROM products WHERE stock_quantity = 0 AND is_active = 1");
+            $outOfStock = (int)$stmt->fetch()['out_of_stock'];
+            
+            $stmt = $db->query("SELECT COALESCE(SUM(stock_quantity * price), 0) as total_value FROM products WHERE is_active = 1");
+            $totalValue = (float)$stmt->fetch()['total_value'];
+            
+            response([
+                'success' => true,
+                'stats' => [
+                    'total' => $total,
+                    'low_stock' => $low,
+                    'out_of_stock' => $outOfStock,
+                    'good_stock' => $total - $low - $outOfStock,
+                    'total_value' => $totalValue
+                ]
+            ]);
+        }
+        break;
         
-        logActivity($conn, $_SESSION['admin_id'], 'update', 'inventory', $id, "Updated stock for {$product['name']}: $previousStock -> $newStock");
-        
-        jsonResponse(true, 'Stock updated successfully');
-    } else {
-        jsonResponse(false, 'Failed to update stock');
-    }
-    
-    $updateStmt->close();
+    case 'PUT':
+        if ($action === 'update' && isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            $data = json_decode(file_get_contents('php://input'), true);
+            
+            $newQuantity = (int)($data['quantity'] ?? 0);
+            $reason = sanitize($data['reason'] ?? 'adjustment');
+            $notes = sanitize($data['notes'] ?? '');
+            
+            $stmt = $db->prepare("SELECT stock_quantity FROM products WHERE id = ?");
+            $stmt->execute([$id]);
+            $product = $stmt->fetch();
+            
+            if (!$product) {
+                response(['error' => 'Product not found'], 404);
+            }
+            
+            $oldQuantity = (int)$product['stock_quantity'];
+            $change = $newQuantity - $oldQuantity;
+            
+            $validReasons = ['restock', 'sale', 'damage', 'return', 'adjustment'];
+            if (!in_array($reason, $validReasons)) {
+                $reason = 'adjustment';
+            }
+            
+            $db->beginTransaction();
+            
+            try {
+                $updateStmt = $db->prepare("UPDATE products SET stock_quantity = ? WHERE id = ?");
+                $updateStmt->execute([$newQuantity, $id]);
+                
+                $logStmt = $db->prepare("
+                    INSERT INTO inventory (product_id, quantity_change, change_type, notes, admin_id)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
+                $logStmt->execute([$id, $change, $reason, $notes, $_SESSION['admin_id']]);
+                
+                $db->commit();
+                
+                response([
+                    'success' => true,
+                    'message' => 'Stock updated successfully',
+                    'old_quantity' => $oldQuantity,
+                    'new_quantity' => $newQuantity,
+                    'change' => $change
+                ]);
+            } catch (Exception $e) {
+                $db->rollBack();
+                response(['error' => 'Failed to update stock'], 500);
+            }
+        } elseif ($action === 'batch') {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $updates = $data['updates'] ?? [];
+            
+            if (empty($updates)) {
+                response(['error' => 'No updates provided'], 400);
+            }
+            
+            $db->beginTransaction();
+            
+            try {
+                foreach ($updates as $update) {
+                    $id = (int)$update['id'];
+                    $quantity = (int)$update['quantity'];
+                    
+                    $stmt = $db->prepare("SELECT stock_quantity FROM products WHERE id = ?");
+                    $stmt->execute([$id]);
+                    $product = $stmt->fetch();
+                    
+                    if ($product) {
+                        $change = $quantity - (int)$product['stock_quantity'];
+                        
+                        $updateStmt = $db->prepare("UPDATE products SET stock_quantity = ? WHERE id = ?");
+                        $updateStmt->execute([$quantity, $id]);
+                        
+                        $logStmt = $db->prepare("
+                            INSERT INTO inventory (product_id, quantity_change, change_type, notes, admin_id)
+                            VALUES (?, ?, 'restock', 'Batch update', ?)
+                        ");
+                        $logStmt->execute([$id, $change, $_SESSION['admin_id']]);
+                    }
+                }
+                
+                $db->commit();
+                response(['success' => true, 'message' => 'Batch update successful']);
+            } catch (Exception $e) {
+                $db->rollBack();
+                response(['error' => 'Batch update failed'], 500);
+            }
+        }
+        break;
 }
 
-function getLogs($conn) {
-    $product_id = (int)($_GET['product_id'] ?? 0);
-    $limit = (int)($_GET['limit'] ?? 50);
-    
-    $sql = "SELECT il.*, p.name as product_name, a.full_name as admin_name 
-            FROM inventory_logs il 
-            LEFT JOIN products p ON il.product_id = p.id 
-            LEFT JOIN admins a ON il.admin_id = a.id 
-            WHERE 1=1";
-    
-    $params = [];
-    $types = '';
-    
-    if ($product_id) {
-        $sql .= " AND il.product_id = ?";
-        $params[] = $product_id;
-        $types .= 'i';
-    }
-    
-    $sql .= " ORDER BY il.created_at DESC LIMIT ?";
-    $params[] = $limit;
-    $types .= 'i';
-    
-    $stmt = $conn->prepare($sql);
-    if ($params) {
-        $stmt->bind_param($types, ...$params);
-    }
-    $stmt->execute();
-    $logs = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    jsonResponse(true, 'Logs loaded', $logs);
-}
-
-function getLowStock($conn) {
-    $sql = "SELECT p.*, c.name as category_name 
-            FROM products p 
-            LEFT JOIN categories c ON p.category_id = c.id 
-            WHERE p.is_active = 1 AND p.stock_quantity <= p.low_stock_threshold 
-            ORDER BY p.stock_quantity ASC";
-    
-    $products = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
-    
-    jsonResponse(true, 'Low stock products loaded', $products);
-}
+response(['error' => 'Invalid request'], 400);
+?>

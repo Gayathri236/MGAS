@@ -1,326 +1,270 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
-requireLogin();
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
-$conn = connectDB();
-$action = sanitize($_GET['action'] ?? 'sales_overview');
+require_once '../config/database.php';
+require_once '../config/functions.php';
+
+requireAuth();
+
+$database = new Database();
+$db = $database->getConnection();
+
+$action = $_GET['action'] ?? 'sales';
 
 switch ($action) {
-    case 'sales_overview':
-        getSalesOverview($conn);
-        break;
-    case 'top_products':
-        getTopProducts($conn);
-        break;
-    case 'top_customers':
-        getTopCustomers($conn);
-        break;
-    case 'monthly_report':
-        getMonthlyReport($conn);
-        break;
-    case 'inventory_report':
-        getInventoryReport($conn);
-        break;
-    case 'export':
-        exportReport($conn);
-        break;
-    default:
-        jsonResponse(false, 'Invalid action');
-}
-
-function getSalesOverview($conn) {
-    $start_date = sanitize($_GET['start_date'] ?? date('Y-m-01'));
-    $end_date = sanitize($_GET['end_date'] ?? date('Y-m-d'));
-    
-    $summarySql = "SELECT 
-        COUNT(*) as total_orders,
-        SUM(total) as total_sales,
-        AVG(total) as avg_order_value,
-        SUM(CASE WHEN payment_status = 'paid' THEN total ELSE 0 END) as paid_amount,
-        SUM(CASE WHEN payment_status = 'pending' THEN total ELSE 0 END) as pending_amount
-        FROM orders 
-        WHERE DATE(created_at) BETWEEN ? AND ?";
-    
-    $stmt = $conn->prepare($summarySql);
-    $stmt->bind_param("ss", $start_date, $end_date);
-    $stmt->execute();
-    $summary = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    
-    $dailySalesSql = "SELECT 
-        DATE(created_at) as date,
-        COUNT(*) as orders,
-        SUM(total) as sales
-        FROM orders 
-        WHERE DATE(created_at) BETWEEN ? AND ? AND payment_status = 'paid'
-        GROUP BY DATE(created_at)
-        ORDER BY date ASC";
-    
-    $stmt = $conn->prepare($dailySalesSql);
-    $stmt->bind_param("ss", $start_date, $end_date);
-    $stmt->execute();
-    $dailySales = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    $statusBreakdownSql = "SELECT 
-        status,
-        COUNT(*) as count,
-        SUM(total) as total
-        FROM orders 
-        WHERE DATE(created_at) BETWEEN ? AND ?
-        GROUP BY status";
-    
-    $stmt = $conn->prepare($statusBreakdownSql);
-    $stmt->bind_param("ss", $start_date, $end_date);
-    $stmt->execute();
-    $statusBreakdown = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    jsonResponse(true, 'Sales overview loaded', [
-        'summary' => $summary,
-        'daily_sales' => $dailySales,
-        'status_breakdown' => $statusBreakdown,
-        'start_date' => $start_date,
-        'end_date' => $end_date
-    ]);
-}
-
-function getTopProducts($conn) {
-    $limit = (int)($_GET['limit'] ?? 10);
-    $start_date = sanitize($_GET['start_date'] ?? date('Y-m-01'));
-    $end_date = sanitize($_GET['end_date'] ?? date('Y-m-d'));
-    
-    $sql = "SELECT 
-        p.id,
-        p.name,
-        p.image,
-        p.price,
-        p.sku,
-        SUM(oi.quantity) as total_quantity,
-        SUM(oi.subtotal) as total_revenue,
-        COUNT(DISTINCT oi.order_id) as order_count
-        FROM order_items oi
-        LEFT JOIN products p ON oi.product_id = p.id
-        LEFT JOIN orders o ON oi.order_id = o.id
-        WHERE DATE(o.created_at) BETWEEN ? AND ?
-        AND o.status NOT IN ('cancelled', 'refunded')
-        GROUP BY p.id
-        ORDER BY total_quantity DESC
-        LIMIT ?";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssi", $start_date, $end_date, $limit);
-    $stmt->execute();
-    $products = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    $totalRevenue = array_sum(array_column($products, 'total_revenue'));
-    
-    foreach ($products as &$product) {
-        $product['percentage'] = $totalRevenue > 0 ? round(($product['total_revenue'] / $totalRevenue) * 100, 1) : 0;
-    }
-    
-    jsonResponse(true, 'Top products loaded', [
-        'products' => $products,
-        'total_revenue' => $totalRevenue
-    ]);
-}
-
-function getTopCustomers($conn) {
-    $limit = (int)($_GET['limit'] ?? 10);
-    
-    $sql = "SELECT 
-        c.id,
-        c.first_name,
-        c.last_name,
-        c.email,
-        c.phone,
-        COUNT(o.id) as total_orders,
-        SUM(o.total) as total_spent,
-        MAX(o.created_at) as last_order_date
-        FROM customers c
-        LEFT JOIN orders o ON c.id = o.customer_id
-        WHERE o.status NOT IN ('cancelled', 'refunded')
-        GROUP BY c.id
-        HAVING total_orders > 0
-        ORDER BY total_spent DESC
-        LIMIT ?";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $limit);
-    $stmt->execute();
-    $customers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    jsonResponse(true, 'Top customers loaded', $customers);
-}
-
-function getMonthlyReport($conn) {
-    $year = (int)($_GET['year'] ?? date('Y'));
-    
-    $monthlySql = "SELECT 
-        MONTH(created_at) as month,
-        COUNT(*) as orders,
-        SUM(total) as revenue
-        FROM orders
-        WHERE YEAR(created_at) = ? AND payment_status = 'paid'
-        GROUP BY MONTH(created_at)
-        ORDER BY month ASC";
-    
-    $stmt = $conn->prepare($monthlySql);
-    $stmt->bind_param("i", $year);
-    $stmt->execute();
-    $monthlyData = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    $months = [];
-    for ($i = 1; $i <= 12; $i++) {
-        $found = array_filter($monthlyData, fn($m) => $m['month'] == $i);
-        if ($found) {
-            $data = array_values($found)[0];
-            $months[] = [
-                'month' => $i,
-                'month_name' => date('M', mktime(0, 0, 0, $i, 1)),
-                'orders' => $data['orders'],
-                'revenue' => $data['revenue']
-            ];
-        } else {
-            $months[] = [
-                'month' => $i,
-                'month_name' => date('M', mktime(0, 0, 0, $i, 1)),
-                'orders' => 0,
-                'revenue' => 0
-            ];
+    case 'sales':
+        $period = isset($_GET['period']) ? sanitize($_GET['period']) : 'daily';
+        $date_from = isset($_GET['date_from']) ? sanitize($_GET['date_from']) : date('Y-m-01');
+        $date_to = isset($_GET['date_to']) ? sanitize($_GET['date_to']) : date('Y-m-d');
+        
+        $dateFormat = '%Y-%m-%d';
+        
+        if ($period === 'monthly') {
+            $dateFormat = '%Y-%m';
+        } elseif ($period === 'yearly') {
+            $dateFormat = '%Y';
         }
-    }
-    
-    $totalRevenue = array_sum(array_column($monthlyData, 'revenue'));
-    $totalOrders = array_sum(array_column($monthlyData, 'orders'));
-    
-    jsonResponse(true, 'Monthly report loaded', [
-        'year' => $year,
-        'months' => $months,
-        'total_revenue' => $totalRevenue,
-        'total_orders' => $totalOrders,
-        'avg_monthly' => $totalRevenue / 12
-    ]);
-}
-
-function getInventoryReport($conn) {
-    $sql = "SELECT 
-        p.name,
-        p.sku,
-        c.name as category,
-        p.stock_quantity,
-        p.low_stock_threshold,
-        p.price,
-        p.cost_price,
-        (p.stock_quantity * p.cost_price) as stock_value
-        FROM products p
-        LEFT JOIN categories c ON p.category_id = c.id
-        WHERE p.is_active = 1
-        ORDER BY stock_value DESC";
-    
-    $products = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
-    
-    $summary = [
-        'total_products' => count($products),
-        'total_value' => array_sum(array_column($products, 'stock_value')),
-        'low_stock_count' => count(array_filter($products, fn($p) => $p['stock_quantity'] <= $p['low_stock_threshold'])),
-        'out_of_stock_count' => count(array_filter($products, fn($p) => $p['stock_quantity'] == 0))
-    ];
-    
-    jsonResponse(true, 'Inventory report loaded', [
-        'products' => $products,
-        'summary' => $summary
-    ]);
-}
-
-function exportReport($conn) {
-    $type = sanitize($_GET['type'] ?? 'sales');
-    $format = sanitize($_GET['format'] ?? 'csv');
-    
-    switch ($type) {
-        case 'sales':
-            $data = getSalesData($conn);
-            break;
-        case 'products':
-            $data = getProductsData($conn);
-            break;
-        case 'customers':
-            $data = getCustomersData($conn);
-            break;
-        default:
-            jsonResponse(false, 'Invalid report type');
-    }
-    
-    if ($format === 'csv') {
+        
+        $stmt = $db->prepare("
+            SELECT 
+                DATE_FORMAT(created_at, '$dateFormat') as date,
+                COUNT(*) as orders,
+                COALESCE(SUM(subtotal), 0) as revenue,
+                COALESCE(SUM(tax), 0) as tax,
+                COALESCE(SUM(delivery_fee), 0) as delivery,
+                COALESCE(SUM(total), 0) as total
+            FROM orders
+            WHERE DATE(created_at) BETWEEN ? AND ? AND payment_status = 'paid'
+            GROUP BY DATE_FORMAT(created_at, '$dateFormat')
+            ORDER BY date ASC
+        ");
+        $stmt->execute([$date_from, $date_to]);
+        $daily = $stmt->fetchAll();
+        
+        $summary = [
+            'total_orders' => 0,
+            'total_revenue' => 0,
+            'total_tax' => 0,
+            'total_delivery' => 0,
+            'total_amount' => 0,
+            'avg_order_value' => 0
+        ];
+        
+        foreach ($daily as $row) {
+            $summary['total_orders'] += (int)$row['orders'];
+            $summary['total_revenue'] += (float)$row['revenue'];
+            $summary['total_tax'] += (float)$row['tax'];
+            $summary['total_delivery'] += (float)$row['delivery'];
+            $summary['total_amount'] += (float)$row['total'];
+        }
+        
+        if ($summary['total_orders'] > 0) {
+            $summary['avg_order_value'] = $summary['total_amount'] / $summary['total_orders'];
+        }
+        
+        response([
+            'success' => true,
+            'data' => $daily,
+            'summary' => $summary,
+            'period' => $period,
+            'date_from' => $date_from,
+            'date_to' => $date_to
+        ]);
+        break;
+        
+    case 'products':
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        $date_from = isset($_GET['date_from']) ? sanitize($_GET['date_from']) : date('Y-m-01');
+        $date_to = isset($_GET['date_to']) ? sanitize($_GET['date_to']) : date('Y-m-d');
+        
+        $stmt = $db->prepare("
+            SELECT 
+                p.id,
+                p.name,
+                p.price,
+                p.image,
+                c.name as category,
+                SUM(oi.quantity) as units_sold,
+                SUM(oi.subtotal) as revenue,
+                COUNT(DISTINCT oi.order_id) as order_count
+            FROM order_items oi
+            JOIN products p ON oi.product_id = p.id
+            LEFT JOIN categories c ON p.category_id = c.id
+            JOIN orders o ON oi.order_id = o.id
+            WHERE DATE(o.created_at) BETWEEN ? AND ?
+            GROUP BY p.id
+            ORDER BY revenue DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$date_from, $date_to, $limit]);
+        $products = $stmt->fetchAll();
+        
+        $totalRevenue = 0;
+        $totalUnits = 0;
+        foreach ($products as $p) {
+            $totalRevenue += (float)$p['revenue'];
+            $totalUnits += (int)$p['units_sold'];
+        }
+        
+        foreach ($products as &$p) {
+            $p['percentage'] = $totalRevenue > 0 ? round(($p['revenue'] / $totalRevenue) * 100, 1) : 0;
+        }
+        
+        response([
+            'success' => true,
+            'products' => $products,
+            'total_revenue' => $totalRevenue,
+            'total_units' => $totalUnits,
+            'date_from' => $date_from,
+            'date_to' => $date_to
+        ]);
+        break;
+        
+    case 'customers':
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        
+        $stmt = $db->prepare("
+            SELECT 
+                c.id,
+                c.name,
+                c.email,
+                c.total_orders,
+                c.total_spent,
+                c.last_order_date,
+                c.created_at
+            FROM customers c
+            WHERE c.is_blocked = 0
+            ORDER BY c.total_spent DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        $customers = $stmt->fetchAll();
+        
+        $totalRevenue = 0;
+        $totalCustomers = count($customers);
+        foreach ($customers as $c) {
+            $totalRevenue += (float)$c['total_spent'];
+        }
+        
+        response([
+            'success' => true,
+            'customers' => $customers,
+            'total_revenue' => $totalRevenue,
+            'total_customers' => $totalCustomers
+        ]);
+        break;
+        
+    case 'summary':
+        $today = date('Y-m-d');
+        $weekAgo = date('Y-m-d', strtotime('-7 days'));
+        $monthStart = date('Y-m-01');
+        
+        $stats = [];
+        
+        $stmt = $db->query("SELECT COUNT(*) as total FROM orders");
+        $stats['total_orders'] = (int)$stmt->fetch()['total'];
+        
+        $stmt = $db->query("SELECT COALESCE(SUM(total), 0) as revenue FROM orders WHERE payment_status = 'paid'");
+        $stats['total_revenue'] = (float)$stmt->fetch()['revenue'];
+        
+        $stmt = $db->query("SELECT COUNT(*) as total FROM customers");
+        $stats['total_customers'] = (int)$stmt->fetch()['total'];
+        
+        $stmt = $db->query("SELECT COUNT(*) as total FROM products WHERE is_active = 1");
+        $stats['total_products'] = (int)$stmt->fetch()['total'];
+        
+        $stmt = $db->prepare("SELECT COUNT(*) as orders, COALESCE(SUM(total), 0) as revenue FROM orders WHERE DATE(created_at) = ?");
+        $stmt->execute([$today]);
+        $todayData = $stmt->fetch();
+        $stats['today_orders'] = (int)$todayData['orders'];
+        $stats['today_revenue'] = (float)$todayData['revenue'];
+        
+        $stmt = $db->prepare("SELECT COUNT(*) as orders, COALESCE(SUM(total), 0) as revenue FROM orders WHERE DATE(created_at) BETWEEN ? AND ?");
+        $stmt->execute([$weekAgo, $today]);
+        $weekData = $stmt->fetch();
+        $stats['week_orders'] = (int)$weekData['orders'];
+        $stats['week_revenue'] = (float)$weekData['revenue'];
+        
+        $stmt = $db->prepare("SELECT COUNT(*) as orders, COALESCE(SUM(total), 0) as revenue FROM orders WHERE DATE(created_at) >= ?");
+        $stmt->execute([$monthStart]);
+        $monthData = $stmt->fetch();
+        $stats['month_orders'] = (int)$monthData['orders'];
+        $stats['month_revenue'] = (float)$monthData['revenue'];
+        
+        $stmt = $db->query("SELECT COALESCE(AVG(total), 0) as avg FROM orders WHERE payment_status = 'paid'");
+        $stats['avg_order_value'] = (float)$stmt->fetch()['avg'];
+        
+        response(['success' => true, 'stats' => $stats]);
+        break;
+        
+    case 'export':
+        $type = isset($_GET['type']) ? sanitize($_GET['type']) : 'sales';
+        $date_from = isset($_GET['date_from']) ? sanitize($_GET['date_from']) : date('Y-m-01');
+        $date_to = isset($_GET['date_to']) ? sanitize($_GET['date_to']) : date('Y-m-d');
+        
         header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="report_' . $type . '_' . date('Y-m-d') . '.csv"');
+        header('Content-Disposition: attachment; filename="' . $type . '_report_' . date('Y-m-d') . '.csv"');
         
         $output = fopen('php://output', 'w');
         
-        if (!empty($data)) {
-            fputcsv($output, array_keys($data[0]));
-            foreach ($data as $row) {
+        if ($type === 'sales') {
+            fputcsv($output, ['Date', 'Orders', 'Revenue', 'Tax', 'Delivery', 'Total']);
+            
+            $stmt = $db->prepare("
+                SELECT 
+                    DATE(created_at) as date,
+                    COUNT(*) as orders,
+                    COALESCE(SUM(subtotal), 0) as revenue,
+                    COALESCE(SUM(tax), 0) as tax,
+                    COALESCE(SUM(delivery_fee), 0) as delivery,
+                    COALESCE(SUM(total), 0) as total
+                FROM orders
+                WHERE DATE(created_at) BETWEEN ? AND ? AND payment_status = 'paid'
+                GROUP BY DATE(created_at)
+                ORDER BY date ASC
+            ");
+            $stmt->execute([$date_from, $date_to]);
+            
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                fputcsv($output, $row);
+            }
+        } elseif ($type === 'products') {
+            fputcsv($output, ['Product', 'Category', 'Units Sold', 'Revenue', 'Orders']);
+            
+            $stmt = $db->prepare("
+                SELECT 
+                    p.name,
+                    c.name as category,
+                    SUM(oi.quantity) as units,
+                    SUM(oi.subtotal) as revenue,
+                    COUNT(DISTINCT oi.order_id) as orders
+                FROM order_items oi
+                JOIN products p ON oi.product_id = p.id
+                LEFT JOIN categories c ON p.category_id = c.id
+                JOIN orders o ON oi.order_id = o.id
+                WHERE DATE(o.created_at) BETWEEN ? AND ?
+                GROUP BY p.id
+                ORDER BY revenue DESC
+            ");
+            $stmt->execute([$date_from, $date_to]);
+            
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 fputcsv($output, $row);
             }
         }
         
         fclose($output);
         exit;
-    }
-    
-    jsonResponse(true, 'Report data', $data);
+        
+    default:
+        response(['error' => 'Invalid action'], 400);
 }
-
-function getSalesData($conn) {
-    $sql = "SELECT 
-        o.order_number,
-        CONCAT(c.first_name, ' ', c.last_name) as customer,
-        o.total,
-        o.status,
-        o.payment_status,
-        o.payment_method,
-        o.created_at
-        FROM orders o
-        LEFT JOIN customers c ON o.customer_id = c.id
-        ORDER BY o.created_at DESC
-        LIMIT 1000";
-    
-    return $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
-}
-
-function getProductsData($conn) {
-    $sql = "SELECT 
-        p.name,
-        p.sku,
-        c.name as category,
-        p.price,
-        p.stock_quantity,
-        p.low_stock_threshold,
-        p.is_active
-        FROM products p
-        LEFT JOIN categories c ON p.category_id = c.id
-        ORDER BY p.name";
-    
-    return $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
-}
-
-function getCustomersData($conn) {
-    $sql = "SELECT 
-        CONCAT(c.first_name, ' ', c.last_name) as name,
-        c.email,
-        c.phone,
-        c.city,
-        c.state,
-        c.total_orders,
-        c.total_spent,
-        c.status,
-        c.created_at
-        FROM customers c
-        ORDER BY c.total_spent DESC";
-    
-    return $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
-}
+?>
